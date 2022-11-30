@@ -22,7 +22,7 @@ The models can be generated using simple NumPy arrays. Any kind of geometry can 
 4. The order of the materials matters
 
 ## gprMax simulations
-The documentation of gprMax give some simple commands to run simulations. For example :
+The documentation of gprMax give some simple commands to run simulations. For example:
  
 `python -m gprMax user_models/cylinder_Ascan_2D.in`, 
  
