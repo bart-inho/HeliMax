@@ -1,5 +1,5 @@
 # helico-gprMax
-This repository aims to show how to generate gprMax input files using NumPy arrays, and how to perform simulation using these input files. The models generated and performed are inspired by an airborne ice Radar setup from ETH. This work is done during a master thesis project. The ultimate goal of these simulations is to determine if a shielding between the GPR and the helicopter would be effective and if so, what geometry and properties it should have. 
+This repository aims to show how to generate gprMax input files using NumPy arrays, and how to perform simulation using these input files. The models generated and performed are inspired by an airborne ice Radar setup from ETHZ. This work is done during a master thesis project. The ultimate goal of these simulations is to determine if a shielding between the GPR and the helicopter would be effective and if so, what geometry and properties it should have. 
  
 Public description of the project : https://vaw.ethz.ch/en/research/glaciology/research-projects.html
  
