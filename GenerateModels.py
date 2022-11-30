@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import h5py as h5py
 from os.path import exists
 import os
+from FuncTest import *
 
 # Model size and discretization -----------------------------------
 xsize = 100 # x-size of the model [m]
