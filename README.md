@@ -24,7 +24,7 @@ The models can be generated using simple NumPy arrays. Any kind of geometry can 
 ## gprMax simulations
 The documentation of gprMax give some simple commands to run simulations. For example :
  
-`python -m gprMax user_models/cylinder_Ascan.in`, 
+`python -m gprMax user_models/cylinder_Ascan_2D.in`, 
  
 where `cylinder_Ascan.in` is a basic input file from gprMax. In certain cases, it's an advantage to use a GPU to run gprMax simulations. This can be done by using the `-gpu` argument.
  
