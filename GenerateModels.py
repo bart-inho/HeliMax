@@ -5,7 +5,7 @@ from os.path import exists
 import os
 
 # Model size and discretization -----------------------------------
-xsize = 40 # x-size of the model [m]
+xsize = 100 # x-size of the model [m]
 ysize = 100 # y-size of the model [m]
 
 dx = .1 # z cell size [m]
@@ -20,6 +20,7 @@ freq = 25e6 # [MHz]
 time_window = 1.5e-6 # [s]
 
 # Folder and path -------------------------------------------------
+ModelName = 'off-centered-bedrock'
 infileFolder = 'inout_files/'
 pathinput = 'bedrock_model.in' # .in file
 pathmaterials = 'bedrock_model_materials.txt' # material file
@@ -32,7 +33,7 @@ infilname_materials = open(infileFolder+pathmaterials, 'w') # create materials f
 mat_freespace = [1., 0., 1., 0] # gprMax build in 
 mat_glacier = [3.2, 5.e-8, 1., 0]  # Church et al., 2020
 mat_bedrock = [5., 0.01, 1, 0] # granite Annan (1999)
-mat_helico = [1., 1000, 1., 0] # metal gprMax build in
+mat_helico = [1., 'inf', 1., 0] # metal gprMax build in
 
 # Generate file with material properties --------------------------
 infilname_materials.write('#material: '+str(mat_freespace[0])+' '+str(mat_freespace[1])+' '+str(mat_freespace[2])+' '+str(mat_freespace[3])+' freespace\n')
@@ -70,8 +71,8 @@ receiy = round(ysize/3-.5)
 plt.imshow(model.T) # plotting the transverse
 plt.scatter(transx/xsize*nx, transy/ysize*ny)
 plt.scatter(receix/xsize*nx, receiy/ysize*ny)
-plt.title('Model')
-#plt.savefig('figname')
+plt.title(ModelName)
+plt.savefig('figures/'+ModelName+'.png')
 plt.show()
 
 # Rehape the model for gprMax compulsory third dimension -----------
@@ -103,8 +104,8 @@ infilename.write('#hertzian_dipole: z '+str(transx)+' '+str(transy)+' 0 my_ricke
 infilename.write('#rx: '+str(receix)+' '+str(receiy)+' 0\n')
 
 # Movement of the right
-infilename.write('#src_steps: 0.5 0 0\n')
-infilename.write('#rx_steps: 0.5 0 0\n')
+infilename.write('#src_steps: 2 0 0\n')
+infilename.write('#rx_steps: 2 0 0\n')
 
 # Include external files
 infilename.write('#geometry_objects_read: 0 0 0 '+pathh5+' '+infileFolder+pathmaterials)

@@ -1,10 +1,10 @@
 #title: bedrock_model 
-#domain: 40 100 0.1 
+#domain: 100 100 0.1 
 #dx_dy_dz: 0.1 0.1 0.1 
 #time_window: 1.5e-06
 #waveform: ricker 1 25000000.0 my_ricker
-#hertzian_dipole: z 4 33 0 my_ricker
-#rx: 7 33 0
-#src_steps: 0.5 0 0
-#rx_steps: 0.5 0 0
+#hertzian_dipole: z 10 33 0 my_ricker
+#rx: 13 33 0
+#src_steps: 2 0 0
+#rx_steps: 2 0 0
 #geometry_objects_read: 0 0 0 inout_files/bedrock.h5 inout_files/bedrock_model_materials.txt
