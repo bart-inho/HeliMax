@@ -70,8 +70,8 @@ receiy = round(ysize/3-.5)
 plt.imshow(model.T) # plotting the transverse
 plt.scatter(transx/xsize*nx, transy/ysize*ny)
 plt.scatter(receix/xsize*nx, receiy/ysize*ny)
-plt.title('off centered bedrock')
-plt.savefig('off_centered_bedrock.png')
+plt.title('Model')
+#plt.savefig('figname')
 plt.show()
 
 # Rehape the model for gprMax compulsory third dimension -----------
