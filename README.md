@@ -15,7 +15,7 @@ All the programs as well as the simulations are launched using the `Makefile`.
 A `Makefile` is simply a list of commands that your computer will run into a terminal. Different programs can be launched at the same time, or separately if needed. Everything is controlled by few keywords. Typing `make run` in the terminal in a gprMax Conda environment will run first `GenerateModels.py`and then will launch gprMax simulation using the input file generated.
  
 ## Generate models
-The models can be generated using simple NumPy arrays. Any kind of geometry can be generated, on few conditions :
+The models can be generated using simple NumPy arrays. Any kind of geometry can be generated, on few conditions:
 1. The array is composed of integer (not permittivity values)
 2. Every integer correspond to a specific material
 3. All materials are described in a text file (see the file for the structure)
