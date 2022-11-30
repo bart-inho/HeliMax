@@ -44,12 +44,12 @@ infilname_materials.write('#material: '+str(mat_helico[0])+' '+str(mat_helico[1]
 # Generate base of the model --------------------------------------
 model = np.zeros((ny, nx)) # Free space = 1
 model[round(ny/2):ny,:] = 2 # Granite = 2
-#model[round(ny*2/3):ny, :] = 2 # alternative geometry
+# model[round(ny*2/3):ny, :] = 2 # alternative geometry
 model[0:round(ny/20), :] = 3 # Helico = 3
 
 # Generate a curved bedrock ---------------------------------------
 center = [0, nx]
-r = 90 # Define center of the circle
+r = 100 # Define center of the circle
 for i in range(0, ny): # start loop on x
     for j in range(0, nx): # start loop on y
         rij = np.sqrt(((j - center[1])*dx)**2 + ((i - center[0])*dy)**2) # Calculate distance
@@ -62,10 +62,10 @@ model = model.T # taking the transverse of the matrix is necessary for the gprMa
 # Define x and y position for the transiever and the receiver ------
 transx = round(xsize/10)
 receix = round(xsize/10 + 3)
-transy = round(ysize/3-.5)
-receiy = round(ysize/3-.5)
-# transy = round(ysize/2-.5)
-# receiy = round(ysize/2-.5)
+transy = round(ysize/3-.5) # transeiver in the air
+receiy = round(ysize/3-.5) # receiver in the air
+# transy = round(ysize/2-.5) # transeiver on the ground
+# receiy = round(ysize/2-.5) # receiver on the ground
 
 # Plot the model ---------------------------------------------------
 plt.imshow(model.T) # plotting the transverse
