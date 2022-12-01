@@ -1,0 +1,10 @@
+#title: off_centered_bedrock_air_helico
+#domain: 100 100 0.1 
+#dx_dy_dz: 0.1 0.1 0.1 
+#time_window: 1.5e-06
+#waveform: ricker 1 25000000.0 my_ricker
+#hertzian_dipole: z 10 33 0 my_ricker
+#rx: 13 33 0
+#src_steps: 4 0 0
+#rx_steps: 4 0 0
+#geometry_objects_read: 0 0 0 inout_files/off_centered_bedrock_air_helico.h5 inout_files/off_centered_bedrock_air_helico_materials.txt

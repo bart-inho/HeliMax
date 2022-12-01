@@ -12,14 +12,14 @@ def WriteMaterialsFile(path_to_materials, mat_freespace, mat_bedrock, mat_glacie
     infilename_materials.write('#material: '+str(mat_bedrock[0])+' '+str(mat_bedrock[1])+' '+str(mat_bedrock[2])+' '+str(mat_bedrock[3])+' bedrock\n')
     infilename_materials.write('#material: '+str(mat_helico[0])+' '+str(mat_helico[1])+' '+str(mat_helico[2])+' '+str(mat_helico[3])+' helicopter\n')
     
-def WriteInputFile(path_to_input, path_to_materials, path_to_h5, xsize, ysize, discrete, freq, trans, recei, time_window):
+def WriteInputFile(ModelName, path_to_input, path_to_materials, path_to_h5, xsize, ysize, discrete, freq, trans, recei, mstep, time_window):
     infilename = open(path_to_input+'.in', 'w') # create .in file
 
     dx = discrete[0]
     dy = discrete[1]
     dz = discrete[2]
     
-    infilename.write('#title: bedrock_model \n')
+    infilename.write('#title: '+ModelName+'\n')
     
     # Set domain size, don't forget z = dz for 2D
     infilename.write('#domain: '+str(xsize)+' '+str(ysize)+' '+str(dz)+' \n')
@@ -34,8 +34,8 @@ def WriteInputFile(path_to_input, path_to_materials, path_to_h5, xsize, ysize, d
     infilename.write('#rx: '+str(recei[0])+' '+str(recei[1])+' 0\n')
 
     # Movement of the right
-    infilename.write('#src_steps: 2 0 0\n')
-    infilename.write('#rx_steps: 2 0 0\n')
+    infilename.write('#src_steps: '+str(mstep)+' 0 0\n')
+    infilename.write('#rx_steps: '+str(mstep)+' 0 0\n')
 
     # Include external files
     infilename.write('#geometry_objects_read: 0 0 0 '+path_to_h5+'.h5 '+path_to_materials+'.txt')
