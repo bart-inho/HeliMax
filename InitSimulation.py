@@ -25,7 +25,7 @@ measurment_number = 20 # number of gprMax simulations
 measurment_step = round((ysize - 10)/measurment_number) # number of step minus a margin
 
 # Folder, files name and path -------------------------------------
-ModelName = 'off_centered_bedrock_air_helico'
+ModelName = 'off_centered_bedrock_air'
 
 folder_inout = 'inout_files/'
 filename_input = ModelName # .in file
@@ -48,7 +48,7 @@ WriteMaterialsFile(path_to_materials, mat_freespace, mat_bedrock, mat_glacier, m
 # Generate base of the model --------------------------------------
 model = np.zeros((ny, nx)) # Free space = 1
 model[round(ny/2):ny,:] = 2 # Granite = 2
-model[0:round(ny/20), :] = 3 # Helico = 3
+#model[0:round(ny/20), :] = 3 # Helico = 3
 
 # Generate a curved bedrock ---------------------------------------
 center = [0, nx]
