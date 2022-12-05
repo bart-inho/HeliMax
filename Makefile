@@ -6,3 +6,5 @@ run:
 	python RunSimulation.py
 plot:
 	python PlotSimulation.py
+clean:
+	rm inout_files/*.h5 inout_files/*.txt inout_files/*.in inout_files/*.out

@@ -16,7 +16,6 @@ A `Makefile` is simply a list of commands that your computer will run into a ter
 
 - Typing `make init` : runs the script `InitSimulation.py`
 - Typing `make run` : launches gprMax simulation using the input file generated.
-- Typing `make merge` : merges the all the traces into one output file
 - Typing `make plot` : plots the result using the gprMax build in function `plot_Bscan`
 
 For now, it is only possible to run one simulation at the time. (to be continued...)

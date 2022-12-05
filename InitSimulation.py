@@ -20,12 +20,12 @@ ny = int(ysize / dy) # y-number of cell
 
 # Frequency and time window ---------------------------------------
 freq = 25e6 # [MHz]
-time_window = 1.5e-6 # [s]
-measurment_number = 20 # number of gprMax simulations
-measurment_step = round((ysize - 10)/measurment_number) # number of step minus a margin
+time_window = 1.e-6 # [s]
+measurment_number = 50 # number of gprMax simulations
+measurment_step = round((ysize - 30)/measurment_number) # number of step minus a margin
 
 # Folder, files name and path -------------------------------------
-ModelName = 'off_centered_bedrock_air'
+ModelName = 'test_rugged_bedrock_air_helico'
 
 folder_inout = 'inout_files/'
 filename_input = ModelName # .in file
@@ -47,19 +47,19 @@ WriteMaterialsFile(path_to_materials, mat_freespace, mat_bedrock, mat_glacier, m
 
 # Generate base of the model --------------------------------------
 model = np.zeros((ny, nx)) # Free space = 1
-model[round(ny/2):ny,:] = 2 # Granite = 2
-#model[0:round(ny/20), :] = 3 # Helico = 3
+model[round(ny/2):ny,:] = 1 # Glacier = 2
+model[0:round(ny/20), :] = 3 # Helico = 3
 
 # Generate a curved bedrock ---------------------------------------
 center = [0, nx]
 r = 100 # Define center of the circle
-CreateCircleShape(model, r, center, dx, dy)
+CreateCircleShape('rough', model, r, center, dx, dy)
 
 # Flip matrix ------------------------------------------------------
 model = model.T # taking the transverse of the matrix is necessary for the gprMax format
 
 # Define x and y position for the transiever and the receiver ------
-trans = [round(xsize/10), round(ysize/3-.5)]
+trans = [round(xsize/10),     round(ysize/3-.5)]
 recei = [round(xsize/10 + 3), round(ysize/3-.5)]
 
 # Plot model -------------------------------------------------------
