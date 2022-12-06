@@ -11,7 +11,7 @@ The setup is composed of a python file `InitSimulation.py` and a `Makefile`. The
  You must have a gprMax environment correctly installed : https://github.com/gprMax/gprMax
  
 # How it works
-All the programs as well as the simulations are launched using the `Makefile`.
+All the subroutines and simulations are launched using the `Makefile`.
  
 ## Makefile system
 A `Makefile` is simply a list of commands that your computer will run into a terminal. Different programs can be launched at the same time, or separately if needed. Everything is controlled by few keywords. The conda environment `gprMax` must be activated.
