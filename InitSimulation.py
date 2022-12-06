@@ -53,7 +53,7 @@ model[0:round(ny/20), :] = 3 # Helico = 3
 # Generate a curved bedrock ---------------------------------------
 center = [0, nx]
 r = 100 # Define center of the circle
-CreateCircleShape('rough', model, r, center, dx, dy)
+CreateCircleShape('rough', model, r, center, dx, dy) #generate circle shape
 
 # Flip matrix ------------------------------------------------------
 model = model.T # taking the transverse of the matrix is necessary for the gprMax format
