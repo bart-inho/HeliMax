@@ -4,19 +4,22 @@ This repository aims to show how to generate gprMax input files using NumPy arra
 Public description of the project : https://vaw.ethz.ch/en/research/glaciology/research-projects.html
  
 # The setup
-The setup is composed of a python file `InitSimulation.py` and a `Makefile`. . The folder `inout_files` stores the inputs and output files, as well as the figures. This repository should be downloaded and placed into the gprMax folder. For example :
+The setup is composed of a python file `InitSimulation.py` and a `Makefile`. The folder `inout_files` stores  input and output files, as well as the figures. This repository should be downloaded and placed into the gprMax folder. For example :
  
 `home/user/gprMax/helico-gprMax`
  
+ You must have a gprMax environment correctly installed : https://github.com/gprMax/gprMax
+ 
 # How it works
-All the programs as well as the simulations are launched using the `Makefile`.
+All the subroutines and simulations are launched using the `Makefile`.
  
 ## Makefile system
-A `Makefile` is simply a list of commands that your computer will run into a terminal. Different programs can be launched at the same time, or separately if needed. Everything is controlled by few keywords. The conda environment `gprMax` must be activated.
+A `Makefile` is simply a list of short cut for commands that a computer will run into a terminal. Different programs can be launched using the same shortcut, or separately if needed. Everything is controlled by few keywords. The conda environment `gprMax` must be activated.
 
 - Typing `make init` : runs the script `InitSimulation.py`
 - Typing `make run` : launches gprMax simulation using the input file generated.
 - Typing `make plot` : plots the result using the gprMax build in function `plot_Bscan`
+- Typing `make clean`: cleans up `inout_files` folder from `.out`, `.in`, `.txt` and `.h5` files
 
 For now, it is only possible to run one simulation at the time. (to be continued...)
  
