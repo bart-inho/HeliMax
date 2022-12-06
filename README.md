@@ -25,10 +25,12 @@ For now, it is only possible to run one simulation at the time. (to be continued
  
 ## Generate models
 The models can be generated using simple NumPy arrays. Any kind of geometry can be generated, on few conditions:
-1. The array is composed of integer (not permittivity values)
+1. The array is composed of integer (not physical properties)
 2. Every integer correspond to a specific material
-3. All materials are described in a text file (see the file for the structure)
+3. All materials are described in a `.txt` file (see the file for the structure)
 4. The order of the materials matters
+5. The matrix of integer is stored in a `.h5` file
+6. The `.in` file contains all the information, plus the `.txt` and `.h5` file paths
 
 ## gprMax simulations
 The documentation of gprMax give some simple commands to run simulations. For example:
