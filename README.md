@@ -8,6 +8,8 @@ The setup is composed of a python file `InitSimulation.py` and a `Makefile`. The
  
 `home/user/gprMax/helico-gprMax`
  
+ You must have a gprMax environment correctly installed : https://github.com/gprMax/gprMax
+ 
 # How it works
 All the programs as well as the simulations are launched using the `Makefile`.
  
