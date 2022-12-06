@@ -14,7 +14,7 @@ The setup is composed of a python file `InitSimulation.py` and a `Makefile`. The
 All the subroutines and simulations are launched using the `Makefile`.
  
 ## Makefile system
-A `Makefile` is simply a list of commands that your computer will run into a terminal. Different programs can be launched at the same time, or separately if needed. Everything is controlled by few keywords. The conda environment `gprMax` must be activated.
+A `Makefile` is simply a list of short cut for commands that a computer will run into a terminal. Different programs can be launched using the same shortcut, or separately if needed. Everything is controlled by few keywords. The conda environment `gprMax` must be activated.
 
 - Typing `make init` : runs the script `InitSimulation.py`
 - Typing `make run` : launches gprMax simulation using the input file generated.
