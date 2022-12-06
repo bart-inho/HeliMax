@@ -4,7 +4,7 @@ This repository aims to show how to generate gprMax input files using NumPy arra
 Public description of the project : https://vaw.ethz.ch/en/research/glaciology/research-projects.html
  
 # The setup
-The setup is composed of a python file `InitSimulation.py` and a `Makefile`. The folder `inout_files` stores the inputs and output files, as well as the figures. This repository should be downloaded and placed into the gprMax folder. For example :
+The setup is composed of a python file `InitSimulation.py` and a `Makefile`. The folder `inout_files` stores  input and output files, as well as the figures. This repository should be downloaded and placed into the gprMax folder. For example :
  
 `home/user/gprMax/helico-gprMax`
  
