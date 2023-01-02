@@ -68,8 +68,10 @@ PlotInitialModel(ModelName, model, trans, recei, xsize, ysize)
 # Rehape the model for gprMax compulsory third dimension -----------
 model = np.reshape(model, (nx, ny, 1))
 
-# generate h5 file -------------------------------------------------
-Writeh5File(path_to_h5, model, discrete)
+def GenerateInitialFiles(ModelName, model, trans, recei):
+    # generate h5 file -------------------------------------------------
+    Writeh5File(path_to_h5, model, discrete)
 
-# Generate .in file ------------------------------------------------
-WriteInputFile(ModelName, path_to_input, path_to_materials, path_to_h5, xsize, ysize, discrete, freq, trans, recei, measurment_step, time_window)
+    # Generate .in file ------------------------------------------------
+    WriteInputFile(ModelName, path_to_input, path_to_materials, path_to_h5, xsize, 
+        ysize, discrete, freq, trans, recei, measurment_step, time_window)
