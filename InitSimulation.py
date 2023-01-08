@@ -6,8 +6,8 @@ import os
 from FunctionRep import *
 
 # Model size and discretization -----------------------------------
-xsize = 100 # x-size of the model [m]
-ysize = 100 # y-size of the model [m]
+xsize = 60 # x-size of the model [m]
+ysize = 125 # y-size of the model [m]
 
 dx = .1 # z cell size [m]
 dy = .1 # y cell size [m]
@@ -25,7 +25,7 @@ measurment_number = 50 # number of gprMax simulations
 measurment_step = round((ysize - 30)/measurment_number) # number of step minus a margin
 
 # Folder, files name and path -------------------------------------
-ModelName = 'test_rugged_bedrock_air_helico'
+ModelName = 'test_moving'
 
 folder_inout = 'inout_files/'
 filename_input = ModelName # .in file
@@ -48,27 +48,31 @@ WriteMaterialsFile(path_to_materials, mat_freespace, mat_bedrock, mat_glacier, m
 # Generate base of the model --------------------------------------
 model = np.zeros((ny, nx)) # Free space = 1
 model[round(ny/2):ny,:] = 1 # Glacier = 2
-model[0:round(ny/20), :] = 3 # Helico = 3
+# model[0:round(ny/20), :] = 3 # Helico = 3
 
 # Generate a curved bedrock ---------------------------------------
 center = [0, nx]
 r = 100 # Define center of the circle
-CreateCircleShape('rough', model, r, center, dx, dy) #generate circle shape
+CreateCircleShape('smooth', model, r, center, dx, dy) #generate circle shape
 
-# Flip matrix ------------------------------------------------------
-model = model.T # taking the transverse of the matrix is necessary for the gprMax format
 
-# Define x and y position for the transiever and the receiver ------
-trans = [round(xsize/10),     round(ysize/3-.5)]
-recei = [round(xsize/10 + 3), round(ysize/3-.5)]
+def GenerateModels():
+    # for step in range(0, measurment_number):
+    MoveHelico(model, nx, ny, dx, dy, 20)
 
-# Plot model -------------------------------------------------------
-PlotInitialModel(ModelName, model, trans, recei, xsize, ysize)
+    # Flip matrix ------------------------------------------------------
+    model = model.T # taking the transverse of the matrix is necessary for the gprMax format
 
-# Rehape the model for gprMax compulsory third dimension -----------
-model = np.reshape(model, (nx, ny, 1))
+    # Define x and y position for the transiever and the receiver ------
+    trans = [round(xsize/10),     round(ysize/2 - 10)] # 10 meters above the glacier
+    recei = [round(xsize/10 + 3), round(ysize/2 - 10)]
 
-def GenerateInitialFiles(ModelName, model, trans, recei):
+    # Plot model -------------------------------------------------------
+    PlotInitialModel(ModelName, model, trans, recei, xsize, ysize)
+
+    # Rehape the model for gprMax compulsory third dimension -----------
+    model = np.reshape(model, (nx, ny, 1))
+
     # generate h5 file -------------------------------------------------
     Writeh5File(path_to_h5, model, discrete)
 

@@ -50,14 +50,15 @@ def CreateCircleShape(type, model, r, center, dx, dy):
     ny = model.shape[1]
     N = nx * ny
     N_loop = N-N/2
-    for i in range(0, ny): # start loop on x
-        for j in range(0, nx): # start loop on y
+    for i in range(0, nx): # start loop on x
+        for j in range(0, ny): # start loop on y
             if type == 'smooth':
                 rij = np.sqrt(((j - center[1])*dx)**2 + ((i - center[0])*dy)**2) # Calculate distance
             elif type == 'rough':
                 rij = (np.sqrt(((j - center[1])*dx)**2 + ((i - center[0])*dy)**2))+np.sin(N_loop/25000) # Calculate distance
             else:
                 print('Please enter correct string input : either smooth or rough')
+
             if rij > r and i > round(ny/2):# condition
                 model[i, j] = 2 # Bedrock = 2
             N_loop += 1
@@ -72,3 +73,6 @@ def PlotInitialModel(ModelName, model, trans, recei, xsize, ysize):
     plt.title(ModelName)
     plt.savefig('figures/'+ModelName+'.png')
     plt.close()
+
+def MoveHelico(model, nx, ny, dx, dy, step):
+    model[300:400, step:200+step] = 3
