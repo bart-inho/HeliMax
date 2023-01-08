@@ -6,6 +6,8 @@ import os
 from random import randrange
 
 # This function repository regroups every repetitive or space consuming task. 
+
+# Write materials and input files --------------------------
 def WriteMaterialsFile(path_to_materials, mat_freespace, mat_bedrock, mat_glacier, mat_helico):
     infilename_materials = open(path_to_materials+'.txt', 'w') # create materials file
     infilename_materials.write('#material: '+str(mat_freespace[0])+' '+str(mat_freespace[1])+' '+str(mat_freespace[2])+' '+str(mat_freespace[3])+' freespace\n')
@@ -45,7 +47,52 @@ def Writeh5File(path_to_h5, model, discrete):
     hdf.attrs['dx_dy_dz'] = [dx, dy, dz] # create an attribute that containes dx, dy and dz
     # -> more info : https://docs.h5py.org/en/stable/high/dataset.html?highlight=attrs#h5py.Dataset.attrs
 
-def CreateCircleShape(type, model, r, center, dx, dy):
+def GeneratePaths(ModelName, folder_inout):
+    filename_input = ModelName # .in file
+    filename_materials = ModelName+'_materials' # material file
+    path_to_h5 = folder_inout+ModelName # path
+
+    # Create path to file ---------------------------------------------
+    path_to_input = folder_inout + filename_input
+    path_to_materials = folder_inout+filename_materials
+
+    return path_to_h5, path_to_input, path_to_materials
+
+def GenerateMaterials():
+    mat_freespace = [1., 0., 1., 0] # gprMax build in 
+    mat_glacier = [3.2, 5.e-8, 1., 0]  # Church et al., 2020
+    mat_bedrock = [5., 0.01, 1, 0] # granite Annan (1999)
+    mat_helico = [1., 'inf', 1., 0] # metal gprMax build in
+
+    return mat_freespace, mat_glacier, mat_bedrock, mat_helico
+
+def CurvedBedrockModel(dx, dy, nx, ny):
+    model = np.zeros((ny, nx)) # Free space = 0
+    model[round(45.0/dy):ny,:] = 1 # Glacier = 1, 15.0 = distance from top of the model
+    # Generate a curved bedrock
+    center = [0, nx]
+    r = 100 # Define center of the circle
+    CreateCircleShape('smooth', 'bedrock', model, r, center, dx, dy) #generate circle shape
+    return model
+
+def HelicoShape(model, material, antenna_start, antenna_height, dx, dy):
+    if material == 'helico':
+        mat = 3
+    model[round((antenna_height - 17.5)/dx):round((antenna_height - 15.0)/dy),
+     round(antenna_start/dx): round((antenna_start + 5.0)/dy)] = mat
+    return model
+
+# Generate circle shape depending on reius
+def CreateCircleShape(type, material, model, r, center, dx, dy):
+    if material == 'bedrock':
+        mat = 2
+    elif material == 'helico':
+        mat = 3
+    elif material == 'glacier':
+        mat = 1
+    elif material == 'freespace':
+        mat = 0
+
     nx = model.shape[0]
     ny = model.shape[1]
     N = nx * ny
@@ -54,16 +101,17 @@ def CreateCircleShape(type, model, r, center, dx, dy):
         for j in range(0, ny): # start loop on y
             if type == 'smooth':
                 rij = np.sqrt(((j - center[1])*dx)**2 + ((i - center[0])*dy)**2) # Calculate distance
-            elif type == 'rough':
-                rij = (np.sqrt(((j - center[1])*dx)**2 + ((i - center[0])*dy)**2))+np.sin(N_loop/25000) # Calculate distance
+            # elif type == 'rough':
+            #     rij = (np.sqrt(((j - center[1])*dx)**2 + ((i - center[0])*dy)**2))+np.sin(N_loop/25000) # Calculate distance
             else:
                 print('Please enter correct string input : either smooth or rough')
 
             if rij > r and i > round(ny/2):# condition
-                model[i, j] = 2 # Bedrock = 2
+                model[i, j] = mat
             N_loop += 1
                 
-def PlotInitialModel(ModelName, model, trans, recei, xsize, ysize):
+# Plot initial model
+def PlotInitialModel(ModelName, model, trans, recei, xsize, ysize, dx, dy):
     nx = model.shape[0]
     ny = model.shape[1]
     # Plot the model ---------------------------------------------------
@@ -73,6 +121,7 @@ def PlotInitialModel(ModelName, model, trans, recei, xsize, ysize):
     plt.title(ModelName)
     plt.savefig('figures/'+ModelName+'.png')
     plt.close()
+
 
 def MoveHelico(model, nx, ny, dx, dy, step):
     model[300:400, step:200+step] = 3
