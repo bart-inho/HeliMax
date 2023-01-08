@@ -15,8 +15,9 @@ def WriteMaterialsFile(path_to_materials, mat_freespace, mat_bedrock, mat_glacie
     infilename_materials.write('#material: '+str(mat_bedrock[0])+' '+str(mat_bedrock[1])+' '+str(mat_bedrock[2])+' '+str(mat_bedrock[3])+' bedrock\n')
     infilename_materials.write('#material: '+str(mat_helico[0])+' '+str(mat_helico[1])+' '+str(mat_helico[2])+' '+str(mat_helico[3])+' helicopter\n')
     
-def WriteInputFile(ModelName, path_to_input, path_to_materials, path_to_h5, xsize, ysize, discrete, freq, trans, recei, mstep, time_window):
-    infilename = open(path_to_input+'.in', 'w') # create .in file
+def WriteInputFile(ModelName, path_to_input, path_to_materials, path_to_h5, xsize, ysize, 
+    discrete, freq, trans, recei, time_window, trace):
+    infilename = open(path_to_input+str(trace)+'.in', 'w') # create .in file
     dx = discrete[0]
     dy = discrete[1]
     dz = discrete[2]
@@ -31,8 +32,8 @@ def WriteInputFile(ModelName, path_to_input, path_to_materials, path_to_h5, xsiz
     infilename.write('#hertzian_dipole: z '+str(trans[0])+' '+str(trans[1])+' 0 my_ricker\n')
     infilename.write('#rx: '+str(recei[0])+' '+str(recei[1])+' 0\n')
     # Movement of the right
-    infilename.write('#src_steps: '+str(mstep)+' 0 0\n')
-    infilename.write('#rx_steps: '+str(mstep)+' 0 0\n')
+    # infilename.write('#src_steps: '+str(mstep)+' 0 0\n')
+    # infilename.write('#rx_steps: '+str(mstep)+' 0 0\n')
     # Include external files
     infilename.write('#geometry_objects_read: 0 0 0 '+path_to_h5+'.h5 '+path_to_materials+'.txt')
 
@@ -75,11 +76,11 @@ def CurvedBedrockModel(dx, dy, nx, ny):
     CreateCircleShape('smooth', 'bedrock', model, r, center, dx, dy) #generate circle shape
     return model
 
-def HelicoShape(model, material, antenna_start, antenna_height, dx, dy):
+def HelicoShape(model, material, delta, antenna_start, antenna_height, dx, dy):
     if material == 'helico':
         mat = 3
-    model[round((antenna_height - 17.5)/dx):round((antenna_height - 15.0)/dy),
-     round(antenna_start/dx): round((antenna_start + 5.0)/dy)] = mat
+    model[round((antenna_height - 20)/dx):round((antenna_height - 16.5)/dy),
+     round((antenna_start+delta-4)/dx): round((antenna_start+delta+9)/dy)] = mat
     return model
 
 # Generate circle shape depending on reius
@@ -122,6 +123,21 @@ def PlotInitialModel(ModelName, model, trans, recei, xsize, ysize, dx, dy):
     plt.savefig('figures/'+ModelName+'.png')
     plt.close()
 
+def MoveHelico(ModelName, path_to_input, path_to_materials,
+    path_to_h5, xsize, ysize, discrete, freq, trans, recei, trace, time_window, nx, ny, dx, dy, delta, antenna_start, antenna_height):
+    # Generate base of the model --------------------------------------
+    model = CurvedBedrockModel(dx, dy, nx, ny)
 
-def MoveHelico(model, nx, ny, dx, dy, step):
+    # Define helico shape
+    model = HelicoShape(model, 'helico', delta, antenna_start, antenna_height, dx, dy)
+
+    model = model.T
+
+    # Rehape the model for gprMax compulsory third dimension and print h5 file
+    Writeh5File(path_to_h5, np.reshape(model, (nx, ny, 1)), discrete)
+
+    # Generate .in file ------------------------------------------------
+    WriteInputFile(ModelName, path_to_input, path_to_materials,
+    path_to_h5, xsize, ysize, discrete, freq, trans, recei, time_window, trace)
+    return model
     model[300:400, step:200+step] = 3
