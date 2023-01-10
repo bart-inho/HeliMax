@@ -25,7 +25,8 @@ for trace in range(1, measurment_number+1):
     api(folder_inout+ModelName+str(trace)+'.in', gpu = [0], n = 1)
 
     if trace%20 == 0:
-        PlotInitialModel(ModelName+str(trace), model, trans, recei, xsize, ysize, dx, dy)
+        PlotInitialModel(ModelName+str(trace), model, trans, recei, 
+        xsize, ysize, dx, dy)
 
 merge_files(folder_inout+ModelName, removefiles = True)
 os.system('rm inout_files/*.in')
