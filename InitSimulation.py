@@ -17,7 +17,7 @@ ny = int(ysize / dy) # y-number of cell
 # Frequency and time window ---------------------------------------
 freq = 25e6 # [MHz]
 time_window = 1.25e-6 # [s]
-measurment_number = 75 # number of gprMax simulations
+measurment_number = 25 # number of gprMax simulations
 measurment_step = (xsize - 12)/measurment_number # number of step minus a margin
 print('Measurment step = ', measurment_step, '[m]')
 print('Measurment number = ', measurment_number)

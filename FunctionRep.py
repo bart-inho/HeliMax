@@ -61,12 +61,39 @@ def GeneratePaths(ModelName, folder_inout):
 
     return path_to_h5, path_to_input, path_to_materials
 
+def Homogenization():
+
+    epsilon_0 = 8.8541878128e-12
+    mu_0 = 1.25663706212e-6
+    # Define the properties of the wire and air
+    permittivity_air = 1.0 # F/m
+    permeability_air = 1.0 # H/m
+    
+    permittivity_wire = 1e-10 # F/m (very small value for a perfect conductor)
+    permeability_wire = 1e-10 # H/m (very small value for a perfect conductor)
+
+    # Define the volume fraction of the wire in the wire mesh shield
+    f = 0.2 # 10% wire, 90% air
+
+    # Calculate the effective permittivity and permeability of the wire mesh shield
+    permittivity_eff = permittivity_air*(1-f) + permittivity_wire*f
+    permeability_eff = permeability_air*(1-f) + permeability_wire*f
+
+    #print out the result
+    wire_permittivity = permittivity_eff/epsilon_0
+    wire_permeability = permeability_eff/mu_0
+
+    print('Relative permittivity:', wire_permittivity, 'F/m')
+    print('Relative permeability:', wire_permeability, 'H/m')
+
+    return wire_permittivity, wire_permeability
+
 def GenerateMaterials():
     mat_freespace = [1., 0., 1., 0] # gprMax build in 
     mat_glacier = [3.2, 5.e-8, 1., 0]  # Church et al., 2020
     mat_bedrock = [5., 0.01, 1, 0] # granite Annan (1999)
     mat_helico = [1., 'inf', 1., 0] # metal gprMax build in
-    mat_shield = ['inf', 'inf', 'inf', 0] # metal gprmax build in
+    mat_shield = [1e3, 'inf', 1e3, 0] # metal gprmax build in
 
     return mat_freespace, mat_glacier, mat_bedrock, mat_helico, mat_shield
 
@@ -99,6 +126,8 @@ def CreateCircleShape(type, material, model, r, center, dx, dy):
         mat = 1
     elif material == 'freespace':
         mat = 0
+    elif material == 'shield':
+        mat = 4
 
     nx = model.shape[0]
     ny = model.shape[1]
@@ -112,22 +141,9 @@ def CreateCircleShape(type, material, model, r, center, dx, dy):
             #     rij = (np.sqrt(((j - center[1])*dx)**2 + ((i - center[0])*dy)**2))+np.sin(N_loop/25000) # Calculate distance
             else:
                 print('Please enter correct string input : either smooth or rough')
-
             if rij > r and i > round(ny/2):# condition
                 model[i, j] = mat
             N_loop += 1
-
-# Plot initial model
-def PlotInitialModel(ModelName, model, trans, recei, xsize, ysize, dx, dy):
-    nx = model.shape[0]
-    ny = model.shape[1]
-    # Plot the model ---------------------------------------------------
-    plt.imshow(model.T) # plotting the transverse
-    plt.scatter(trans[0]/xsize*nx, trans[1]/ysize*ny)
-    plt.scatter(recei[0]/xsize*nx, recei[1]/ysize*ny)
-    plt.title(ModelName)
-    plt.savefig('figures/'+ModelName+'.png')
-    plt.close()
 
 def MoveHelico(ModelName, path_to_input, path_to_materials,
     path_to_h5, xsize, ysize, discrete, freq, trans, recei, trace, time_window, nx, ny, dx, dy, delta, antenna_start, antenna_height):
@@ -148,3 +164,16 @@ def MoveHelico(ModelName, path_to_input, path_to_materials,
     WriteInputFile(ModelName, path_to_input, path_to_materials,
     path_to_h5, xsize, ysize, discrete, freq, trans, recei, time_window, trace)
     return model
+
+# Plot initial model
+def PlotInitialModel(ModelName, model, trans, recei, xsize, ysize, dx, dy):
+    nx = model.shape[0]
+    ny = model.shape[1]
+    # Plot the model ---------------------------------------------------
+    plt.imshow(model.T) # plotting the transverse
+    plt.scatter(trans[0]/xsize*nx, trans[1]/ysize*ny)
+    plt.scatter(recei[0]/xsize*nx, recei[1]/ysize*ny)
+    plt.title(ModelName)
+    plt.savefig('figures/'+ModelName+'.png')
+    plt.close()
+
