@@ -1,9 +1,5 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import h5py
-from os.path import exists
-import os
 from FunctionRep import *
+from Homogenization import *
 
 # Model size and discretization -----------------------------------
 xsize = 60 # x-size of the model [m]
@@ -27,17 +23,18 @@ print('Measurment step = ', measurment_step, '[m]')
 print('Measurment number = ', measurment_number)
 
 # Folder, files name and path -------------------------------------
-ModelName = 'test_moving'
+ModelName = 'test_shielding'
 folder_inout = 'inout_files/'
 
+# Generate right paths and files
 path_to_h5, path_to_input, path_to_materials = GeneratePaths(ModelName, folder_inout)
 
 # Define materials [eps_r ; sigma ; mu_r ; vel] -------------------
-mat_freespace, mat_glacier, mat_bedrock, mat_helico = GenerateMaterials()
+mat_freespace, mat_glacier, mat_bedrock, mat_helico, mat_shield = GenerateMaterials()
 
 # Create material file --------------------------------------------
 WriteMaterialsFile(path_to_materials, mat_freespace, mat_bedrock, 
-mat_glacier, mat_helico)
+mat_glacier, mat_helico, mat_shield)
 
 # Define x and y position for the transiever and the receiver ------
 antenna_height = 30.0 # [m] from the top of the model (sky)

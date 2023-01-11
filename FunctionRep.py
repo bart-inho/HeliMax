@@ -8,13 +8,15 @@ from random import randrange
 # This function repository regroups every repetitive or space consuming task. 
 
 # Write materials and input files --------------------------
-def WriteMaterialsFile(path_to_materials, mat_freespace, mat_bedrock, mat_glacier, mat_helico):
+def WriteMaterialsFile(path_to_materials, mat_freespace, mat_bedrock, 
+    mat_glacier, mat_helico, mat_shield):
     infilename_materials = open(path_to_materials+'.txt', 'w') # create materials file
     infilename_materials.write('#material: '+str(mat_freespace[0])+' '+str(mat_freespace[1])+' '+str(mat_freespace[2])+' '+str(mat_freespace[3])+' freespace\n')
     infilename_materials.write('#material: '+str(mat_glacier[0])+' '+str(mat_glacier[1])+' '+str(mat_glacier[2])+' '+str(mat_glacier[3])+' glacier\n')
     infilename_materials.write('#material: '+str(mat_bedrock[0])+' '+str(mat_bedrock[1])+' '+str(mat_bedrock[2])+' '+str(mat_bedrock[3])+' bedrock\n')
     infilename_materials.write('#material: '+str(mat_helico[0])+' '+str(mat_helico[1])+' '+str(mat_helico[2])+' '+str(mat_helico[3])+' helicopter\n')
-    
+    infilename_materials.write('#material: '+str(mat_shield[0])+' '+str(mat_shield[1])+' '+str(mat_shield[2])+' '+str(mat_shield[3])+' shield\n')
+
 def WriteInputFile(ModelName, path_to_input, path_to_materials, path_to_h5, xsize, ysize, 
     discrete, freq, trans, recei, time_window, trace):
     infilename = open(path_to_input+str(trace)+'.in', 'w') # create .in file
@@ -64,8 +66,9 @@ def GenerateMaterials():
     mat_glacier = [3.2, 5.e-8, 1., 0]  # Church et al., 2020
     mat_bedrock = [5., 0.01, 1, 0] # granite Annan (1999)
     mat_helico = [1., 'inf', 1., 0] # metal gprMax build in
+    mat_shield = ['inf', 'inf', 'inf', 0] # metal gprmax build in
 
-    return mat_freespace, mat_glacier, mat_bedrock, mat_helico
+    return mat_freespace, mat_glacier, mat_bedrock, mat_helico, mat_shield
 
 def CurvedBedrockModel(dx, dy, nx, ny):
     model = np.zeros((ny, nx)) # Free space = 0
@@ -76,11 +79,14 @@ def CurvedBedrockModel(dx, dy, nx, ny):
     CreateCircleShape('smooth', 'bedrock', model, r, center, dx, dy) #generate circle shape
     return model
 
-def HelicoShape(model, material, delta, antenna_start, antenna_height, dx, dy):
-    if material == 'helico':
-        mat = 3
+def HelicoShape(model, delta, antenna_start, antenna_height, dx, dy):
     model[round((antenna_height - 20)/dx):round((antenna_height - 16.5)/dy),
-     round((antenna_start+delta-4)/dx): round((antenna_start+delta+9)/dy)] = mat
+        round((antenna_start+delta-4)/dx): round((antenna_start+delta+9)/dy)] = 3
+    return model
+
+def ShieldShape(model, delta, antenna_start, antenna_height, dx, dy):
+    model[round((antenna_height - 1.5)/dx):round((antenna_height - 0.5)/dy),
+        round((antenna_start+delta-2)/dx): round((antenna_start+delta+3)/dy)] = 4
     return model
 
 # Generate circle shape depending on reius
@@ -110,7 +116,7 @@ def CreateCircleShape(type, material, model, r, center, dx, dy):
             if rij > r and i > round(ny/2):# condition
                 model[i, j] = mat
             N_loop += 1
-                
+
 # Plot initial model
 def PlotInitialModel(ModelName, model, trans, recei, xsize, ysize, dx, dy):
     nx = model.shape[0]
@@ -125,11 +131,13 @@ def PlotInitialModel(ModelName, model, trans, recei, xsize, ysize, dx, dy):
 
 def MoveHelico(ModelName, path_to_input, path_to_materials,
     path_to_h5, xsize, ysize, discrete, freq, trans, recei, trace, time_window, nx, ny, dx, dy, delta, antenna_start, antenna_height):
+    
     # Generate base of the model --------------------------------------
     model = CurvedBedrockModel(dx, dy, nx, ny)
 
     # Define helico shape
-    model = HelicoShape(model, 'helico', delta, antenna_start, antenna_height, dx, dy)
+    model = HelicoShape(model, delta, antenna_start, antenna_height, dx, dy)
+    model = ShieldShape(model, delta, antenna_start, antenna_height, dx, dy)
 
     model = model.T
 
@@ -140,4 +148,3 @@ def MoveHelico(ModelName, path_to_input, path_to_materials,
     WriteInputFile(ModelName, path_to_input, path_to_materials,
     path_to_h5, xsize, ysize, discrete, freq, trans, recei, time_window, trace)
     return model
-    model[300:400, step:200+step] = 3
