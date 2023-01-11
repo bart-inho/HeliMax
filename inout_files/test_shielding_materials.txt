@@ -1,5 +1,0 @@
-#material: 1.0 0.0 1.0 0 freespace
-#material: 3.2 5e-08 1.0 0 glacier
-#material: 5.0 0.01 1 0 bedrock
-#material: 1.0 inf 1.0 0 helicopter
-#material: 1000.0 inf 1000.0 0 shield
