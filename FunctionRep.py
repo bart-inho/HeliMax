@@ -93,7 +93,9 @@ def GenerateMaterials():
     mat_glacier = [3.2, 5.e-8, 1., 0]  # Church et al., 2020
     mat_bedrock = [5., 0.01, 1, 0] # granite Annan (1999)
     mat_helico = [1., 'inf', 1., 0] # metal gprMax build in
-    mat_shield = [1e3, 'inf', 1e3, 0] # metal gprmax build in
+
+    wire_permittivity, wire_permeability = Homogenization()
+    mat_shield = [wire_permittivity, 'inf', wire_permeability, 0] # metal gprmax build in
 
     return mat_freespace, mat_glacier, mat_bedrock, mat_helico, mat_shield
 
@@ -112,8 +114,8 @@ def HelicoShape(model, delta, antenna_start, antenna_height, dx, dy):
     return model
 
 def ShieldShape(model, delta, antenna_start, antenna_height, dx, dy):
-    model[round((antenna_height - 1.5)/dx):round((antenna_height - 0.5)/dy),
-        round((antenna_start+delta-2)/dx): round((antenna_start+delta+3)/dy)] = 4
+    model[round((antenna_height - 0.75)/dx):round((antenna_height - 0.5)/dy),
+        round((antenna_start+delta-2)/dx): round((antenna_start+delta+4)/dy)] = 4
     return model
 
 # Generate circle shape depending on reius

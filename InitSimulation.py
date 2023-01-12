@@ -1,5 +1,4 @@
 from FunctionRep import *
-from Homogenization import *
 
 # Model size and discretization -----------------------------------
 xsize = 60 # x-size of the model [m]
@@ -23,7 +22,7 @@ print('Measurment step = ', measurment_step, '[m]')
 print('Measurment number = ', measurment_number)
 
 # Folder, files name and path -------------------------------------
-ModelName = 'test_shielding'
+ModelName = 'test_shielding_noclip'
 folder_inout = 'inout_files/'
 
 # Generate right paths and files
