@@ -1,4 +1,4 @@
 import os
-ModelName = 'test_shielding_noclip'
+ModelName = 'with_shield'
 folder_inout = 'inout_files/'
 os.system('python -m tools.plot_Bscan '+folder_inout+ModelName+'_merged.out Ez')    
