@@ -99,14 +99,6 @@ def GenerateMaterials():
 
     return mat_freespace, mat_glacier, mat_bedrock, mat_helico, mat_shield
 
-def CurvedBedrockModel(dx, dy, nx, ny):
-    model = np.zeros((ny, nx)) # Free space = 0
-    model[round(45.0/dy):ny,:] = 1 # Glacier = 1, 15.0 = distance from top of the model
-    # Generate a curved bedrock
-    center = [0, nx]
-    r = 100 # Define center of the circle
-    CreateCircleShape('smooth', 'bedrock', model, r, center, dx, dy) #generate circle shape
-    return model
 
 def HelicoShape(model, delta, antenna_start, antenna_height, dx, dy):
     model[round((antenna_height - 20)/dx):round((antenna_height - 16.5)/dy),
@@ -116,6 +108,15 @@ def HelicoShape(model, delta, antenna_start, antenna_height, dx, dy):
 def ShieldShape(model, delta, antenna_start, antenna_height, dx, dy):
     model[round((antenna_height - 0.75)/dx):round((antenna_height - 0.5)/dy),
         round((antenna_start+delta-2)/dx): round((antenna_start+delta+4)/dy)] = 4
+    return model
+
+def CurvedBedrockModel(dx, dy, nx, ny):
+    model = np.zeros((ny, nx)) # Free space = 0
+    model[round(45.0/dy):ny,:] = 1 # Glacier = 1, 15.0 = distance from top of the model
+    center = [0, ny]
+    r = 125 # [m] Define center of the circle
+    CreateCircleShape('smooth', 'bedrock', model, r, center, dx, dy) #generate circle shape
+    # Generate a curved bedrock
     return model
 
 # Generate circle shape depending on reius
@@ -143,7 +144,7 @@ def CreateCircleShape(type, material, model, r, center, dx, dy):
             #     rij = (np.sqrt(((j - center[1])*dx)**2 + ((i - center[0])*dy)**2))+np.sin(N_loop/25000) # Calculate distance
             else:
                 print('Please enter correct string input : either smooth or rough')
-            if rij > r and i > round(ny/2):# condition
+            if rij > r and i > round(45.0/dy):# condition
                 model[i, j] = mat
             N_loop += 1
 
@@ -172,10 +173,13 @@ def PlotInitialModel(ModelName, model, trans, recei, xsize, ysize, dx, dy):
     nx = model.shape[0]
     ny = model.shape[1]
     # Plot the model ---------------------------------------------------
-    plt.imshow(model.T) # plotting the transverse
-    plt.scatter(trans[0]/xsize*nx, trans[1]/ysize*ny)
-    plt.scatter(recei[0]/xsize*nx, recei[1]/ysize*ny)
+    plt.pcolormesh(np.arange(0, xsize, dx), np.arange(0, ysize, dy), model.T) # plotting the transverse
+    plt.scatter(trans[0], trans[1])
+    plt.scatter(recei[0], recei[1])
+    plt.gca().invert_yaxis()
+    plt.gca().set_aspect('equal')
     plt.title(ModelName)
+    plt.ylabel('depth [m]')
+    plt.xlabel('distance [m]')
     plt.savefig('figures/'+ModelName+'.png')
     plt.close()
-

@@ -22,7 +22,7 @@ print('Measurment step = ', measurment_step, '[m]')
 print('Measurment number = ', measurment_number)
 
 # Folder, files name and path -------------------------------------
-ModelName = 'test_shielding_noclip'
+ModelName = 'test_plot'
 folder_inout = 'inout_files/'
 
 # Generate right paths and files
