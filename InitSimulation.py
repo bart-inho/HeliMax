@@ -8,6 +8,7 @@ from FunctionRep import *
 # Model size and discretization -----------------------------------
 xsize = 100 # x-size of the model [m]
 ysize = 100 # y-size of the model [m]
+zsize = 1 # z-size of the model [m]
 
 dx = .1 # z cell size [m]
 dy = .1 # y cell size [m]
@@ -17,6 +18,7 @@ discrete = [dx, dy, dz]
 
 nx = int(xsize / dx) # x-number of cell
 ny = int(ysize / dy) # y-number of cell
+nz = int(zsize / dz) # z-number of cell
 
 # Frequency and time window ---------------------------------------
 freq = 25e6 # [MHz]
@@ -46,9 +48,9 @@ mat_helico = [1., 'inf', 1., 0] # metal gprMax build in
 WriteMaterialsFile(path_to_materials, mat_freespace, mat_bedrock, mat_glacier, mat_helico)
 
 # Generate base of the model --------------------------------------
-model = np.zeros((ny, nx)) # Free space = 1
-model[round(ny/2):ny,:] = 1 # Glacier = 2
-model[0:round(ny/20), :] = 3 # Helico = 3
+model = np.zeros((ny, nx, nz)) # Free space = 1
+model[round(ny/2):ny,:,:] = 1 # Glacier = 2
+model[0:round(ny/20), :,:] = 3 # Helico = 3
 
 # Generate a curved bedrock ---------------------------------------
 center = [0, nx]
