@@ -43,4 +43,6 @@ where `cylinder_Ascan.in` is a basic input file from gprMax. In certain cases, i
 This branch shows a moving structure present above the receiver and transiever that emulates a helicpter. This is done by generating a `.in` file for each trace. The structure and the antenna move by incrementing on the `x` position. Each simulation is then combined into one plot. A strong ringing can be observed and the glacier-bedrock interface is bearly visible. 
 
 # Multi-GPU clusters
-For multi-GPU users, the installation requires some attention. In the same conda environment used for gprMax, some packages must be installed. The two main packages to install are `pycuda`, `openmpy` and `mpi4py`. This must be done using `conda install -c conda-forge pycuda mpi4py openmpi`. Then, in certain cases, it will be necessary to remove tha package `mpich` which is installed by conda when installing the package `mpi4py`. `pip` is not used as it will struggle to build wheels to install the packages. 
+For multi-GPU users, the installation requires some attention. In the same conda environment used for gprMax, some packages must be installed. The three main packages to install are `pycuda`, `openmpy` and `mpi4py`. This must be done using:
+`conda install -c conda-forge pycuda mpi4py openmpi`. 
+Then, in certain cases, it will be necessary to remove tha package `mpich` which is installed by conda when installing the package `mpi4py`. `pip` is not used as it will struggle to build wheels to install the packages. 
