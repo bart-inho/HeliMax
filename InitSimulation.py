@@ -8,7 +8,7 @@ from FunctionRep import *
 # Model size and discretization -----------------------------------
 xsize = 100 # x-size of the model [m]
 ysize = 100 # y-size of the model [m]
-zsize = 1 # z-size of the model [m]
+zsize = 10 # z-size of the model [m]
 
 dx = .1 # z cell size [m]
 dy = .1 # y cell size [m]
@@ -61,17 +61,19 @@ CreateCircleShape('rough', model, r, center, dx, dy) #generate circle shape
 model = model.T # taking the transverse of the matrix is necessary for the gprMax format
 
 # Define x and y position for the transiever and the receiver ------
-trans = [round(xsize/10),     round(ysize/3-.5)]
-recei = [round(xsize/10 + 3), round(ysize/3-.5)]
+trans = [round(xsize/10),     round(ysize/3-.5), round(zsize/2)]
+recei = [round(xsize/10 + 3), round(ysize/3-.5), round(zsize/2)]
 
 # Plot model -------------------------------------------------------
-PlotInitialModel(ModelName, model, trans, recei, xsize, ysize)
+PlotInitialModel(ModelName, model, trans, recei, xsize, ysize, zsize)
 
 # Rehape the model for gprMax compulsory third dimension -----------
-model = np.reshape(model, (nx, ny, 1))
+model = np.reshape(model, (nx, ny, nz))
 
 # generate h5 file -------------------------------------------------
 Writeh5File(path_to_h5, model, discrete)
 
 # Generate .in file ------------------------------------------------
-WriteInputFile(ModelName, path_to_input, path_to_materials, path_to_h5, xsize, ysize, discrete, freq, trans, recei, measurment_step, time_window)
+WriteInputFile(ModelName, path_to_input, path_to_materials, 
+               path_to_h5, xsize, ysize, zsize, discrete, freq, trans, 
+               recei, measurment_step, time_window)

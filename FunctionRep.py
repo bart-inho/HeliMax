@@ -13,21 +13,22 @@ def WriteMaterialsFile(path_to_materials, mat_freespace, mat_bedrock, mat_glacie
     infilename_materials.write('#material: '+str(mat_bedrock[0])+' '+str(mat_bedrock[1])+' '+str(mat_bedrock[2])+' '+str(mat_bedrock[3])+' bedrock\n')
     infilename_materials.write('#material: '+str(mat_helico[0])+' '+str(mat_helico[1])+' '+str(mat_helico[2])+' '+str(mat_helico[3])+' helicopter\n')
     
-def WriteInputFile(ModelName, path_to_input, path_to_materials, path_to_h5, xsize, ysize, discrete, freq, trans, recei, mstep, time_window):
+def WriteInputFile(ModelName, path_to_input, path_to_materials, path_to_h5, 
+                   xsize, ysize, zsize, discrete, freq, trans, recei, mstep, time_window):
     infilename = open(path_to_input+'.in', 'w') # create .in file
     dx = discrete[0]
     dy = discrete[1]
     dz = discrete[2]
     infilename.write('#title: '+ModelName+'\n')
     # Set domain size, don't forget z = dz for 2D
-    infilename.write('#domain: '+str(xsize)+' '+str(ysize)+' '+str(dz)+' \n')
+    infilename.write('#domain: '+str(xsize)+' '+str(ysize)+' '+str(zsize)+' \n')
     infilename.write('#dx_dy_dz: '+str(dx)+' '+str(dy)+' '+str(dz)+' \n')
     # Time window
     infilename.write('#time_window: '+ str(time_window)+'\n')
     # Frequency and antenna geometry
     infilename.write('#waveform: ricker 1 '+ str(freq)+ ' my_ricker\n')
-    infilename.write('#hertzian_dipole: z '+str(trans[0])+' '+str(trans[1])+' 0 my_ricker\n')
-    infilename.write('#rx: '+str(recei[0])+' '+str(recei[1])+' 0\n')
+    infilename.write('#hertzian_dipole: z '+str(trans[0])+' '+str(trans[1])+' '+str(trans[2])+' my_ricker\n')
+    infilename.write('#rx: '+str(recei[0])+' '+str(recei[1])+' '+str(recei[2])+'\n')
     # Movement of the right
     infilename.write('#src_steps: '+str(mstep)+' 0 0\n')
     infilename.write('#rx_steps: '+str(mstep)+' 0 0\n')
@@ -62,11 +63,12 @@ def CreateCircleShape(type, model, r, center, dx, dy):
                 model[i, j] = 2 # Bedrock = 2
             N_loop += 1
                 
-def PlotInitialModel(ModelName, model, trans, recei, xsize, ysize):
+def PlotInitialModel(ModelName, model, trans, recei, xsize, ysize, zsize):
     nx = model.shape[0]
     ny = model.shape[1]
+    model_plot = model.T
     # Plot the model ---------------------------------------------------
-    plt.imshow(model.T) # plotting the transverse
+    plt.imshow(model_plot[:, :, round(trans[2]/zsize*nx)]) # plotting the transverse
     plt.scatter(trans[0]/xsize*nx, trans[1]/ysize*ny)
     plt.scatter(recei[0]/xsize*nx, recei[1]/ysize*ny)
     plt.title(ModelName)
