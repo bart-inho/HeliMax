@@ -1,0 +1,4 @@
+#material: freespace 1.0 0.0 1.0 0 glacier 3.2 5e-08 1.0 0 bedrock 5.0 0.01 1 0 helico 1.0 inf 1.0 0
+#material: freespace 1.0 0.0 1.0 0 glacier 3.2 5e-08 1.0 0 bedrock 5.0 0.01 1 0 helico 1.0 inf 1.0 0
+#material: freespace 1.0 0.0 1.0 0 glacier 3.2 5e-08 1.0 0 bedrock 5.0 0.01 1 0 helico 1.0 inf 1.0 0
+#material: freespace 1.0 0.0 1.0 0 glacier 3.2 5e-08 1.0 0 bedrock 5.0 0.01 1 0 helico 1.0 inf 1.0 0
