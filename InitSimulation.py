@@ -6,24 +6,28 @@ import os
 from FunctionRep import *
 
 # Model size and discretization -----------------------------------
-xsize = 100 # x-size of the model [m]
-ysize = 100 # y-size of the model [m]
-zsize = 10 # z-size of the model [m]
+xsize = 50 # x-size of the model [m]
+ysize = 10 # y-size of the model [m]
+zsize = 40 # z-size of the model [m]
 
-dx = .1 # z cell size [m]
-dy = .1 # y cell size [m]
-dz = .1 # z cell size [m]
-
+dx = .25 # z cell size [m]
+dy = .25 # y cell size [m]
+dz = .25 # z cell size [m]
+ 
 discrete = [dx, dy, dz]
 
 nx = int(xsize / dx) # x-number of cell
 ny = int(ysize / dy) # y-number of cell
 nz = int(zsize / dz) # z-number of cell
 
+# Define x and y position for the transiever and the receiver ------
+transiever1 = [round(xsize/10)     , round(ysize/2), round(zsize/3-.5)]
+receiver1 = [round(xsize/10 + 4) , round(ysize/2), round(zsize/3-.5)]
+
 # Frequency and time window ---------------------------------------
 freq = 25e6 # [MHz]
 time_window = 1.e-6 # [s]
-measurment_number = 50 # number of gprMax simulations
+measurment_number = 20 # number of gprMax simulations
 measurment_step = round((ysize - 30)/measurment_number) # number of step minus a margin
 
 # Folder, files name and path -------------------------------------
@@ -48,32 +52,30 @@ mat_helico = [1., 'inf', 1., 0] # metal gprMax build in
 WriteMaterialsFile(path_to_materials, mat_freespace, mat_bedrock, mat_glacier, mat_helico)
 
 # Generate base of the model --------------------------------------
-model = np.zeros((ny, nx, nz)) # Free space = 1
-model[round(ny/2):ny,:,:] = 1 # Glacier = 2
-model[0:round(ny/20), :,:] = 3 # Helico = 3
+model = np.zeros((nx, ny, nz)) # Free space = 0
+model[round(nx/2):nx,:,:] = 1 # Glacier = 1
+model[0:round(nx/20),:,:] = 3 # Helico = 3
 
 # Generate a curved bedrock ---------------------------------------
-center = [0, nx]
-r = 100 # Define center of the circle
-CreateCircleShape('rough', model, r, center, dx, dy) #generate circle shape
+center = [0, ny/2, 0]
+r = 47.5 # Define center of the circle
+GenerateGlacierShape(model, r, center, dx, dz) #generate circle shape
 
 # Flip matrix ------------------------------------------------------
 model = model.T # taking the transverse of the matrix is necessary for the gprMax format
 
-# Define x and y position for the transiever and the receiver ------
-trans = [round(xsize/10),     round(ysize/3-.5), round(zsize/2)]
-recei = [round(xsize/10 + 3), round(ysize/3-.5), round(zsize/2)]
-
 # Plot model -------------------------------------------------------
-PlotInitialModel(ModelName, model, trans, recei, xsize, ysize, zsize)
+PlotInitialModel(ModelName, model, transiever1, receiver1, xsize, ysize, zsize)
 
 # Rehape the model for gprMax compulsory third dimension -----------
 model = np.reshape(model, (nx, ny, nz))
+
+print(model.shape)
 
 # generate h5 file -------------------------------------------------
 Writeh5File(path_to_h5, model, discrete)
 
 # Generate .in file ------------------------------------------------
 WriteInputFile(ModelName, path_to_input, path_to_materials, 
-               path_to_h5, xsize, ysize, zsize, discrete, freq, trans, 
-               recei, measurment_step, time_window)
+               path_to_h5, xsize, ysize, zsize, discrete, freq, transiever1, 
+               receiver1, measurment_step, time_window)

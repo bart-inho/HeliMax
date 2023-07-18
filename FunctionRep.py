@@ -14,7 +14,7 @@ def WriteMaterialsFile(path_to_materials, mat_freespace, mat_bedrock, mat_glacie
     infilename_materials.write('#material: '+str(mat_helico[0])+' '+str(mat_helico[1])+' '+str(mat_helico[2])+' '+str(mat_helico[3])+' helicopter\n')
     
 def WriteInputFile(ModelName, path_to_input, path_to_materials, path_to_h5, 
-                   xsize, ysize, zsize, discrete, freq, trans, recei, mstep, time_window):
+                   xsize, ysize, zsize, discrete, freq, transiever1, reciever1, mstep, time_window):
     infilename = open(path_to_input+'.in', 'w') # create .in file
     dx = discrete[0]
     dy = discrete[1]
@@ -27,8 +27,8 @@ def WriteInputFile(ModelName, path_to_input, path_to_materials, path_to_h5,
     infilename.write('#time_window: '+ str(time_window)+'\n')
     # Frequency and antenna geometry
     infilename.write('#waveform: ricker 1 '+ str(freq)+ ' my_ricker\n')
-    infilename.write('#hertzian_dipole: z '+str(trans[0])+' '+str(trans[1])+' '+str(trans[2])+' my_ricker\n')
-    infilename.write('#rx: '+str(recei[0])+' '+str(recei[1])+' '+str(recei[2])+'\n')
+    infilename.write('#hertzian_dipole: z '+str(transiever1[0])+' '+str(transiever1[1])+' '+str(transiever1[2])+' my_ricker\n')
+    infilename.write('#rx: '+str(reciever1[0])+' '+str(reciever1[1])+' '+str(reciever1[2])+'\n')
     # Movement of the right
     infilename.write('#src_steps: '+str(mstep)+' 0 0\n')
     infilename.write('#rx_steps: '+str(mstep)+' 0 0\n')
@@ -46,31 +46,25 @@ def Writeh5File(path_to_h5, model, discrete):
     hdf.attrs['dx_dy_dz'] = [dx, dy, dz] # create an attribute that containes dx, dy and dz
     # -> more info : https://docs.h5py.org/en/stable/high/dataset.html?highlight=attrs#h5py.Dataset.attrs
 
-def CreateCircleShape(type, model, r, center, dx, dy):
+def GenerateGlacierShape(model, r, center, dx, dz):
+    nx = model.shape[0]
+    nz = model.shape[2]
+
+    for i in range(0, nx):
+        for j in range(0, nz):
+            rij = np.sqrt(((j - center[2])*dz)**2 + ((i - center[0])*dx)**2) # Calculate distance
+            if rij < r and i >= round(nx/2):
+                model[i, :, j] = 2 # Bedrock = 2
+
+def PlotInitialModel(ModelName, model, transiever1, reciever1, xsize, ysize, zsize):
     nx = model.shape[0]
     ny = model.shape[1]
-    N = nx * ny
-    N_loop = N-N/2
-    for i in range(0, ny): # start loop on x
-        for j in range(0, nx): # start loop on y
-            if type == 'smooth':
-                rij = np.sqrt(((j - center[1])*dx)**2 + ((i - center[0])*dy)**2) # Calculate distance
-            elif type == 'rough':
-                rij = (np.sqrt(((j - center[1])*dx)**2 + ((i - center[0])*dy)**2))+np.sin(N_loop/25000) # Calculate distance
-            else:
-                print('Please enter correct string input : either smooth or rough')
-            if rij > r and i > round(ny/2):# condition
-                model[i, j] = 2 # Bedrock = 2
-            N_loop += 1
-                
-def PlotInitialModel(ModelName, model, trans, recei, xsize, ysize, zsize):
-    nx = model.shape[0]
-    ny = model.shape[1]
+    nz = model.shape[2]
     model_plot = model.T
     # Plot the model ---------------------------------------------------
-    plt.imshow(model_plot[:, :, round(trans[2]/zsize*nx)]) # plotting the transverse
-    plt.scatter(trans[0]/xsize*nx, trans[1]/ysize*ny)
-    plt.scatter(recei[0]/xsize*nx, recei[1]/ysize*ny)
+    plt.imshow(model_plot[:, round(transiever1[1]/ysize*ny), :]) # plotting the transverse
+    plt.scatter(transiever1[0]/xsize*nx, transiever1[2]/zsize*nz)
+    plt.scatter(reciever1[0]/xsize*nx, reciever1[2]/zsize*nz)
     plt.title(ModelName)
     plt.savefig('figures/'+ModelName+'.png')
     plt.close()
