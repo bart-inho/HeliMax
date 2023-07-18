@@ -67,4 +67,5 @@ def PlotInitialModel(ModelName, model, transiever1, reciever1, xsize, ysize, zsi
     plt.scatter(reciever1[0]/xsize*nx, reciever1[2]/zsize*nz)
     plt.title(ModelName)
     plt.savefig('figures/'+ModelName+'.png')
+    plt.show()
     plt.close()

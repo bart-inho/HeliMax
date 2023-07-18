@@ -57,8 +57,8 @@ model[round(nx/2):nx,:,:] = 1 # Glacier = 1
 model[0:round(nx/20),:,:] = 3 # Helico = 3
 
 # Generate a curved bedrock ---------------------------------------
-center = [0, ny/2, 0]
-r = 47.5 # Define center of the circle
+center = [0, ny/2, -40]
+r = 45 # Define center of the circle
 GenerateGlacierShape(model, r, center, dx, dz) #generate circle shape
 
 # Flip matrix ------------------------------------------------------
