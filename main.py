@@ -7,14 +7,14 @@ from simulations.simulation_runner import SimulationRunner
 def main():
     # Initialize Materials
     freespace = Material(1., 0., 1., 0, 'freespace')
-    glacier = Material(3.2, 5.e-8, 1., 0, 'glacier')
-    bedrock = Material(5., 0.01, 1, 0, 'bedrock')
-    helico = Material(1., 'inf', 1., 0, 'helico')
+    glacier   = Material(3.2, 5.e-8, 1., 0, 'glacier')
+    bedrock   = Material(5., 0.01, 1, 0, 'bedrock')
+    helico    = Material(1., 'inf', 1., 0, 'helico')
 
     
     # Initialize SimulationModel
-    model_name = 'OOP_tests'
-    inout_files = 'inout_files/'
+    model_name    = 'OOP_tests'
+    inout_files   = 'inout_files/'
     path_to_files = inout_files + model_name
 
     # Generate model
@@ -27,11 +27,11 @@ def main():
     # Generate base model
     model.generate_base()
     measurement_number = 5
-    measurement_step = model.calculate_measurment_step(measurement_number)
+    measurement_step   = model.calculate_measurment_step(measurement_number)
 
     # Add curved bedrock feature
     center = [25, 5, 20] # assuming the center is at the middle of the model
-    r = 35 # radius of the curvature
+    r      = 35          # radius of the curvature
     model.generate_curved_bedrock(center, r)
 
     # Update model matrix orientation and shape if necessary
