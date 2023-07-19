@@ -67,7 +67,7 @@ def main():
     
     simulation_runner = SimulationRunner(model)
 
-    # simulation_runner.run_simulation(measurement_number)
+    simulation_runner.run_simulation(measurement_number)
     simulation_runner.merge_files(True)
 
 if __name__ == "__main__":
