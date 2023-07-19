@@ -7,7 +7,11 @@ class FileService:
     def write_materials_file(path_to_materials, materials):
         with open(path_to_materials+'.txt', 'w') as file: 
             for material in materials:
-                file.write('#material: {} {} {} {}\n'.format(*materials))
+                file.write('#material: {} {} {} {} {}\n'.format(material.eps_r, 
+                                                                material.sigma, 
+                                                                material.mu_r, 
+                                                                material.vel, 
+                                                                material.name))
 
     @staticmethod
     def write_input_file(model, path_to_input, path_to_materials, path_to_h5, 

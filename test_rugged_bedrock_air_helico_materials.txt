@@ -1,4 +1,0 @@
-#material: <models.material.Material object at 0x0000024564C31BD0> <models.material.Material object at 0x0000024564C71D10> <models.material.Material object at 0x0000024564AA9FD0> <models.material.Material object at 0x0000024564C3DE90>
-#material: <models.material.Material object at 0x0000024564C31BD0> <models.material.Material object at 0x0000024564C71D10> <models.material.Material object at 0x0000024564AA9FD0> <models.material.Material object at 0x0000024564C3DE90>
-#material: <models.material.Material object at 0x0000024564C31BD0> <models.material.Material object at 0x0000024564C71D10> <models.material.Material object at 0x0000024564AA9FD0> <models.material.Material object at 0x0000024564C3DE90>
-#material: <models.material.Material object at 0x0000024564C31BD0> <models.material.Material object at 0x0000024564C71D10> <models.material.Material object at 0x0000024564AA9FD0> <models.material.Material object at 0x0000024564C3DE90>

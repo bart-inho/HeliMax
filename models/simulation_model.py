@@ -5,14 +5,13 @@ class SimulationModel:
     # This class is used to store the model information and generate the base model.
 
     def __init__(self, name, x_size, y_size, z_size, 
-                 discrete, materials, measurment_step, path):
+                 discrete, materials, path):
         self.name = name
         self.x_size = x_size
         self.y_size = y_size
         self.z_size = z_size
         self.discrete = discrete
         self.materials = materials
-        self.measurment_step = measurment_step
         self.path = path
 
     def generate_base(self):
@@ -25,7 +24,7 @@ class SimulationModel:
         self.model[0:round(nx/20),:,:] = 3 # Helico = 3
 
     def calculate_measurment_step(self, number_of_measurements):
-        self.measurment_step = round((self.y_size - 10)/number_of_measurements)
+        return (self.z_size - 30)/number_of_measurements
 
     def generate_curved_bedrock(self, center, r):
         nx = self.model.shape[0]

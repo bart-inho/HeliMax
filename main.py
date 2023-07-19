@@ -6,10 +6,11 @@ from simulations.simulation_runner import SimulationRunner
 
 def main():
     # Initialize Materials
-    freespace = Material('freespace', 1., 0., 1., 0)
-    glacier = Material('glacier', 3.2, 5.e-8, 1., 0)
-    bedrock = Material('bedrock', 5., 0.01, 1, 0)
-    helico = Material('helico', 1., 'inf', 1., 0)
+    freespace = Material(1., 0., 1., 0, 'freespace')
+    glacier = Material(3.2, 5.e-8, 1., 0, 'glacier')
+    bedrock = Material(5., 0.01, 1, 0, 'bedrock')
+    helico = Material(1., 'inf', 1., 0, 'helico')
+
     
     # Initialize SimulationModel
     model_name = 'OOP_tests'
@@ -19,13 +20,14 @@ def main():
     # Generate model
     model = SimulationModel(model_name, 
                             50, 10, 40, 
-                            [0.25, 0.25, 0.25], 
-                            [freespace, glacier, bedrock, helico], 0,
+                            [0.2, 0.2, 0.2], 
+                            [freespace, glacier, bedrock, helico],
                             inout_files)
 
     # Generate base model
     model.generate_base()
-    model.calculate_measurment_step(20)
+    measurement_number = 5
+    measurement_step = model.calculate_measurment_step(measurement_number)
 
     # Add curved bedrock feature
     center = [25, 5, 20] # assuming the center is at the middle of the model
@@ -60,12 +62,12 @@ def main():
                                 path_to_files, 
                                 path_to_files + '_materials', 
                                 path_to_files + '_h5', 
-                                25e6, transceiver1, receiver1, 1, 1e-8)
+                                25e6, transceiver1, receiver1, 
+                                measurement_step, 4e-6)
     
     simulation_runner = SimulationRunner(model)
-    
-    measurement_number = 10
-    simulation_runner.run_simulation(measurement_number)
+
+    # simulation_runner.run_simulation(measurement_number)
     simulation_runner.merge_files(True)
 
 if __name__ == "__main__":
