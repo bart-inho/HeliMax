@@ -9,4 +9,4 @@ class SimulationRunner:
         api(self.simulation_model.path + self.simulation_model.name + '.in', gpu = [0], n = measurement_number)
     
     def merge_files(self, remove_files):
-        merge_files(self.simulation_model.path + self.simulation_model.name, removefiles = True)
+        merge_files(self.simulation_model.path + self.simulation_model.name, removefiles = remove_files)
