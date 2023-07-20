@@ -4,9 +4,14 @@ from services.folder_init import InitializeFolders
 from models.simulation_model import SimulationModel
 from models.material import Material
 from simulations.simulation_runner import SimulationRunner
-from simulations.simulation_plot_profile import PlotProfile    
+from simulations.simulation_plot_profile import PlotProfile  
+import argparse
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--run', action='store_true', help='run the simulation')
+    args = parser.parse_args()
+
     # Initialize folders
     InitializeFolders.check_and_create_directories()
 
@@ -72,14 +77,15 @@ def main():
                                 measurement_step, 750e-9) # 750 ns
     
     # Run simulation
-    # simulation_runner = SimulationRunner(model)
-    # simulation_runner.run_simulation(measurement_number)
-    # simulation_runner.merge_files(True)
-    
-    # Plot profile
-    plot_profile = PlotProfile(model.path + model.name + '_merged.out', 'Ez')
-    plot_profile.get_output_data()
-    plot_profile.plot()
+    if args.run:
+        simulation_runner = SimulationRunner(model)
+        simulation_runner.run_simulation(measurement_number)
+        simulation_runner.merge_files(True)
+        
+        # Plot profile
+        plot_profile = PlotProfile(model.path + model.name + '_merged.out', 'Ez')
+        plot_profile.get_output_data()
+        plot_profile.plot()
 
 if __name__ == "__main__":
     main()

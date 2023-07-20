@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from noise import snoise2
 
 class SimulationModel:
     # This class is used to store the model information and generate the base model.
@@ -43,7 +42,7 @@ class SimulationModel:
                 roughness_factor = np.random.normal(loc=1, scale=roughness)
                 rij = roughness_factor * np.sqrt(((j - center[2])*self.discrete[2])**2 + 
                                                 ((i - center[0])*self.discrete[0])**2) # Calculate distance
-                    
+
                 # Create bedrock, ice, water, and free-air layers based on the radial distances
                 if i >= round(nx/3):
                     if rij < r_bedrock:
