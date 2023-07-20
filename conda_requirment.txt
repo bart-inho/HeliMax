@@ -1,0 +1,7 @@
+# Install dependencies
+mpi4py
+openmpi
+cuda-nvcc
+
+# Set environment variables
+export CPLUS_INCLUDE_PATH=/usr/local/cuda/include:${CPLUS_INCLUDE_PATH}
