@@ -24,9 +24,9 @@ class SimulationModel:
         # self.model[0:round(nx/20),:,:] = 4 # Helico = 4
 
     def calculate_measurment_step(self, number_of_measurements):
-        return (self.z_size - 50)/number_of_measurements
+        return (self.z_size - 30)/number_of_measurements
 
-    def generate_curved_bedrock(self, center, r):
+    def generate_curved_bedrock(self, center, r, arg_rough, arg_hetero):
         nx = self.model.shape[0]
         nz = self.model.shape[2]
 
@@ -39,7 +39,11 @@ class SimulationModel:
         for i in range(0, nx):
             for j in range(0, nz):
                 # Add some roughness to the radial distance.
-                roughness_factor = np.random.normal(loc=1, scale=roughness)
+                if arg_rough:
+                    roughness_factor = np.random.normal(loc=1, scale=roughness)
+                else:
+                    roughness_factor = 1
+
                 rij = roughness_factor * np.sqrt(((j - center[2])*self.discrete[2])**2 + 
                                                 ((i - center[0])*self.discrete[0])**2) # Calculate distance
 
@@ -49,9 +53,10 @@ class SimulationModel:
                         self.model[i, :, j] = 2 # Bedrock = 2
                     elif rij < r_ice:
                         self.model[i, :, j] = 1 # Ice = 1
-                    elif rij < r_air:
+
+                    elif rij < r_air and arg_hetero :
                         self.model[i, :, j] = 0 # Free-air = 0
-                    elif rij < r_water:
+                    elif rij < r_water and arg_hetero:
                         self.model[i, :, j] = 3 # water = 3
                             
         if np.any(self.model == 3):

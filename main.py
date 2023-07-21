@@ -10,6 +10,8 @@ import argparse
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--run', action='store_true', help='run the simulation')
+    parser.add_argument('--rough', action='store_true', help='rough bedrock')
+    parser.add_argument('--hetero', action='store_true', help='heterogen bedrock')
     args = parser.parse_args()
 
     # Initialize folders
@@ -36,13 +38,13 @@ def main():
 
     # Generate base model
     model.generate_base()
-    measurement_number = 40
+    measurement_number = 50
     measurement_step   = model.calculate_measurment_step(measurement_number)
 
     # Add curved bedrock feature
     r      = 80            # radius of the curvature
     center = [-200, 5, -10] # assuming the center is at the middle of the model
-    model.generate_curved_bedrock(center, r)
+    model.generate_curved_bedrock(center, r, args.rough, args.hetero)
 
     # Update model matrix orientation and shape if necessary
     model.flip_matrix()
