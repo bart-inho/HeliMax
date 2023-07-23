@@ -28,7 +28,7 @@ class SimulationModel:
         self.model[:, :, round(nz/3):nz] = 1 # Glacier = 1
         # self.model[:, :, 0:10] = 3 # Metal = 3
 
-    def generate_curved_bedrock_glacier(self, center, r, h_ice, arg_rough):
+    def generate_curved_bedrock_glacier(self, center, r, arg_rough):
         nx, ny, nz = self.model.shape
 
         r_bedrock = r
@@ -49,8 +49,8 @@ class SimulationModel:
                                         ((i - center[0]) * self.discrete[0])**2)
 
         # Create bedrock, ice, water, and free-air layers based on the radial distances
-        bedrock_mask = (k >= h_ice) & (rij > r_bedrock)
-        ice_mask = (k >= h_ice) & (rij < r_ice)
+        bedrock_mask = (k >= round(nz/3)) & (rij > r_bedrock)
+        ice_mask = (k >= round(nz/3)) & (rij < r_ice)
 
         self.model[bedrock_mask] = 2  # Bedrock = 2
         self.model[ice_mask] = 1  # Ice = 1

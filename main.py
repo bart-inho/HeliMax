@@ -19,12 +19,10 @@ def main():
 
     # Initialize Materials
     # Change the material names in the "Material" class 
-    freespace = Material(1., 0., 1., 0, 'freespace') # Free space
-    glacier   = Material(3.2, 5.e-8, 1., 0, 'glacier') # Glacier
-    bedrock   = Material(5., 0.01, 1, 0, 'bedrock') # Bedrock
-    metal    = Material(1., 'inf', 1., 0, 'metal') # Helico
-
-    
+    freespace = Material(1. , 0.   , 1., 0., 'freespace') # Free space
+    glacier   = Material(3.2, 5.e-8, 1., 0., 'glacier'  ) # Glacier
+    bedrock   = Material(5. , 1.e-2, 1., 0., 'bedrock'  ) # Bedrock
+    metal     = Material(1. , 'inf', 1., 0., 'metal'    ) # Helico
     
     # Initialize SimulationModel
     model_name    = 'test_roughness'
@@ -37,13 +35,11 @@ def main():
                             [0.08, 0.08, 0.08], # Change discretisation if needed here
                             [freespace, glacier, bedrock, metal], # Change name of materials here
                             inout_files)
-
+    
     # Generate base model
-    height_ice = round(model.z_size/3)
     model.generate_base_glacier()
     model.generate_curved_bedrock_glacier([-10, 5, -200], # center of the curvature [m]
                              100,            # radius of the curvature [m]
-                             height_ice,     # height of the ice [m]
                              args.rough)
 
     measurement_number = 24 # number of traces
