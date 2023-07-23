@@ -20,8 +20,6 @@ def main():
     # Initialize Materials
     # Change the material names in the "Material" class 
     freespace = Material(1., 0., 1., 0, 'freespace') # Free space
-    # moraine   = Material(8., 1.e-3, 1., 0, 'moraine') # Moraine
-    # molasse   = Material(5., 5.e-4, 1., 0, 'molasse') # Molasse
     glacier   = Material(3.2, 5.e-8, 1., 0, 'glacier') # Glacier
     bedrock   = Material(5., 0.01, 1, 0, 'bedrock') # Bedrock
     metal    = Material(1., 'inf', 1., 0, 'metal') # Helico
