@@ -28,31 +28,32 @@ class SimulationModel:
         self.model[:, :, round(nz/3):nz] = 1 # Glacier = 1
         # self.model[:, :, 0:10] = 3 # Metal = 3
 
-    def generate_curved_bedrock_glacier(self, center, r, arg_rough):
-        nx = self.model.shape[0]
-        nz = self.model.shape[2]
+    def generate_curved_bedrock_glacier(self, center, r, h_ice, arg_rough):
+        nx, ny, nz = self.model.shape
 
-        r_bedrock=r
-        r_ice=r+.5
-        roughness=1.5e-2
+        r_bedrock = r
+        r_ice = r + .5
+        roughness = 1.5e-2
 
-        for i in range(0, nx):
-            for j in range(0, nz):
-                # Add some roughness to the radial distance.
-                if arg_rough:
-                    roughness_factor = np.random.normal(loc=1, scale=roughness)
-                else:
-                    roughness_factor = 1
+        # Create index arrays for i, j, k
+        i, j, k = np.mgrid[:nx, :ny, :nz]
 
-                rij = roughness_factor * np.sqrt(((j - center[2])*self.discrete[2])**2 + 
-                                                ((i - center[0])*self.discrete[0])**2) # Calculate distance
+        # Calculate distances considering roughness
+        if arg_rough:
+            # Create a different roughness factor for each y-slice
+            roughness_factor = np.random.normal(loc=1, scale=roughness, size=(nx, ny, nz))
+        else:
+            roughness_factor = 1
 
-                # Create bedrock, ice, water, and free-air layers based on the radial distances
-                if j >= round(nz/3):
-                    if rij > r_bedrock:
-                        self.model[i, :, j] = 2 # Bedrock = 2
-                    elif rij < r_ice:
-                        self.model[i, :, j] = 1 # Ice = 1
+        rij = roughness_factor * np.sqrt(((k - center[2]) * self.discrete[2])**2 +
+                                        ((i - center[0]) * self.discrete[0])**2)
+
+        # Create bedrock, ice, water, and free-air layers based on the radial distances
+        bedrock_mask = (k >= h_ice) & (rij > r_bedrock)
+        ice_mask = (k >= h_ice) & (rij < r_ice)
+
+        self.model[bedrock_mask] = 2  # Bedrock = 2
+        self.model[ice_mask] = 1  # Ice = 1
 
     def plot_initial_model(self, transceiver, receiver):
 

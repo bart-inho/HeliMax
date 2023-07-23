@@ -27,7 +27,7 @@ def main():
     
     
     # Initialize SimulationModel
-    model_name    = 'test_bonjour_sansheli'
+    model_name    = 'test_roughness'
     inout_files   = 'inout_files/'
     path_to_files = inout_files + model_name
 
@@ -39,9 +39,11 @@ def main():
                             inout_files)
 
     # Generate base model
+    height_ice = round(model.z_size/3)
     model.generate_base_glacier()
     model.generate_curved_bedrock_glacier([-10, 5, -200], # center of the curvature [m]
                              100,            # radius of the curvature [m]
+                             height_ice,     # height of the ice [m]
                              args.rough)
 
     measurement_number = 24 # number of traces
