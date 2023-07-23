@@ -14,26 +14,26 @@ class SimulationModel:
         self.materials = materials
         self.path = path
 
-    def generate_base(self):
+    def calculate_measurment_step(self, number_of_measurements, antenna_spacing):
+        nx = self.model.shape[0]
+        nx_buffered = nx - 50 # buffer of 20 cell on each side
+        return round((nx_buffered * self.discrete[0] - antenna_spacing) / number_of_measurements, 2)
+
+    def generate_base_glacier(self):
         nx = int(self.x_size / self.discrete[0])
         ny = int(self.y_size / self.discrete[1])
         nz = int(self.z_size / self.discrete[2])
         
-        self.model = np.zeros((nz, ny, nx)) # Free space = 0
-        self.model[round(nz/3):nz, :, :] = 1 # Glacier = 1
-        # self.model[0:round(nx/20),:,:] = 4 # Helico = 4
+        self.model = np.zeros((nx, ny, nz)) # Free space = 0
+        self.model[:, :, round(nz/3):nz] = 1 # Glacier = 1
+        # self.model[:, :, 0:10] = 3 # Metal = 3
 
-    def calculate_measurment_step(self, number_of_measurements):
-        return (self.z_size - 30)/number_of_measurements
-
-    def generate_curved_bedrock(self, center, r, arg_rough, arg_hetero):
+    def generate_curved_bedrock_glacier(self, center, r, arg_rough):
         nx = self.model.shape[0]
         nz = self.model.shape[2]
 
         r_bedrock=r
-        r_ice=r+.25
-        r_air=r+.5 
-        r_water = r+.75
+        r_ice=r+.5
         roughness=1.5e-2
 
         for i in range(0, nx):
@@ -48,47 +48,26 @@ class SimulationModel:
                                                 ((i - center[0])*self.discrete[0])**2) # Calculate distance
 
                 # Create bedrock, ice, water, and free-air layers based on the radial distances
-                if i >= round(nx/3):
-                    if rij < r_bedrock:
+                if j >= round(nz/3):
+                    if rij > r_bedrock:
                         self.model[i, :, j] = 2 # Bedrock = 2
                     elif rij < r_ice:
                         self.model[i, :, j] = 1 # Ice = 1
 
-                    elif rij < r_air and arg_hetero :
-                        self.model[i, :, j] = 0 # Free-air = 0
-                    elif rij < r_water and arg_hetero:
-                        self.model[i, :, j] = 3 # water = 3
-                            
-        if np.any(self.model == 3):
-            print('Water layer added to the model.')
-        else:
-            print('No water layer added to the model.')
-                        
-    def flip_matrix(self):
-        self.model = self.model.T
-
-    def reshape_model(self):
-        nx = int(self.x_size / self.discrete[0])
-        ny = int(self.y_size / self.discrete[1])
-        nz = int(self.z_size / self.discrete[2])
-        
-        self.model = np.reshape(self.model, (nx, ny, nz))
-
     def plot_initial_model(self, transceiver, receiver):
-        ny = int(self.y_size / self.discrete[1])
 
-        model_plot = self.model.T
-        plt.pcolormesh(np.arange(0, self.x_size, self.discrete[0]), 
-                       np.arange(0, self.z_size, self.discrete[2]), 
-                       model_plot[:, round(transceiver[1]/self.y_size*ny), :])
+        X, Y = np.meshgrid(np.arange(0, self.x_size, self.discrete[0]), 
+                        np.arange(0, self.z_size, self.discrete[2]))
         
+        plt.pcolormesh(X, Y, self.model[:, round(transceiver[1]*self.discrete[1]), :].T)
         plt.scatter(transceiver[0], transceiver[2])
         plt.scatter(receiver[0], receiver[2])
         plt.gca().invert_yaxis()
         plt.gca().set_aspect('equal')
+        plt.colorbar()
+        plt.clim(0, 3)
         plt.ylabel('depth [m]')
         plt.xlabel('distance [m]')
         plt.title(self.name)
         plt.savefig(self.path+'/figures/'+self.name+'.png')
-        # plt.show()
-        plt.close()
+        plt.close()        

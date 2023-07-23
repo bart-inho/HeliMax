@@ -10,58 +10,58 @@ import argparse
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--run', action='store_true', help='run the simulation')
+    parser.add_argument('--plot', action='store_true', help='plot the simulation')
     parser.add_argument('--rough', action='store_true', help='rough bedrock')
-    parser.add_argument('--hetero', action='store_true', help='heterogen bedrock')
     args = parser.parse_args()
 
     # Initialize folders
     InitializeFolders.check_and_create_directories()
 
     # Initialize Materials
-    freespace = Material(1., 0., 1., 0, 'freespace')
-    glacier   = Material(3.2, 5.e-8, 1., 0, 'glacier')
-    bedrock   = Material(5., 0.01, 1, 0, 'bedrock')
-    water     = Material(80., 0.01, 1., 0, 'water')
-    helico    = Material(1., 'inf', 1., 0, 'helico')
+    # Change the material names in the "Material" class 
+    freespace = Material(1., 0., 1., 0, 'freespace') # Free space
+    # moraine   = Material(8., 1.e-3, 1., 0, 'moraine') # Moraine
+    # molasse   = Material(5., 5.e-4, 1., 0, 'molasse') # Molasse
+    glacier   = Material(3.2, 5.e-8, 1., 0, 'glacier') # Glacier
+    bedrock   = Material(5., 0.01, 1, 0, 'bedrock') # Bedrock
+    metal    = Material(1., 'inf', 1., 0, 'metal') # Helico
+
+    
     
     # Initialize SimulationModel
-    model_name    = 'OOP_tests'
+    model_name    = 'test_bonjour_sansheli'
     inout_files   = 'inout_files/'
     path_to_files = inout_files + model_name
 
     # Generate model
     model = SimulationModel(model_name, 
-                            60, 10, 75, 
-                            [0.1, 0.1, 0.1], 
-                            [freespace, glacier, bedrock, water, helico],
+                            50, 10, 100, 
+                            [0.08, 0.08, 0.08], # Change discretisation if needed here
+                            [freespace, glacier, bedrock, metal], # Change name of materials here
                             inout_files)
 
     # Generate base model
-    model.generate_base()
-    measurement_number = 50
-    measurement_step   = model.calculate_measurment_step(measurement_number)
+    model.generate_base_glacier()
+    model.generate_curved_bedrock_glacier([-10, 5, -200], # center of the curvature [m]
+                             100,            # radius of the curvature [m]
+                             args.rough)
 
-    # Add curved bedrock feature
-    r      = 80            # radius of the curvature
-    center = [-200, 5, -10] # assuming the center is at the middle of the model
-    model.generate_curved_bedrock(center, r, args.rough, args.hetero)
-
-    # Update model matrix orientation and shape if necessary
-    model.flip_matrix()
-
-    transceiver1 = [round(model.x_size/10   ),     
-                    round(model.y_size/2    ), 
-                    round(model.z_size/3-.5)]
+    measurement_number = 24 # number of traces
+    antenna_spacing    = 4  # Change antenna spacing in [m] here
+    measurement_step   = model.calculate_measurment_step(measurement_number, 
+                                                         antenna_spacing) # Change antenna spacing in m here
     
-    receiver1    = [round(model.x_size/10 + 4), 
-                    round(model.y_size/2     ),
-                    round(model.z_size/3-.5 )]
-
+    # Add antenna positions
+    transceiver1 = [round(25 * model.discrete[0]), # 25 cells of buffer (20 minimum)    
+                    round(model.y_size/2        ),
+                    round(model.z_size/5-.5     )]
+    
+    receiver1    = [round(25 * model.discrete[0] + antenna_spacing), # 25 cells of buffer (20 minimum)
+                    round(model.y_size/2                          ),
+                    round(model.z_size/5-.5                       )]
+        
     #Plot initial model
     model.plot_initial_model(transceiver1, receiver1)
-
-    # Reshape model for gprMax format
-    model.reshape_model()
 
     # Call FileService to write files
     FileService.write_materials_file(model.path + model.name + '_materials', 
@@ -74,18 +74,20 @@ def main():
                                 path_to_files, 
                                 path_to_files + '_materials', 
                                 path_to_files + '_h5', 
-                                25e6, # 25 MHz
+                                25e6,   # Change frequency in Hz here
                                 transceiver1, receiver1, 
-                                measurement_step, 750e-9) # 750 ns
-    
+                                measurement_step, 
+                                1000e-9) # Change time window in s here
+        
     # Run simulation
     if args.run:
         simulation_runner = SimulationRunner(model)
         simulation_runner.run_simulation(measurement_number)
         simulation_runner.merge_files(True)
         
-        # Plot profile
-        plot_profile = PlotProfile(model.path + model.name + '_merged.out', 'Ez')
+    # Plot profile
+    if args.plot:
+        plot_profile = PlotProfile(model.path + model.name + '_merged.out', 'Ey')
         plot_profile.get_output_data()
         plot_profile.plot()
 

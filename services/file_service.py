@@ -23,7 +23,7 @@ class FileService:
             file.write('#dx_dy_dz: {} {} {}\n'.format(dx, dy, dz))
             file.write('#time_window: {}\n'.format(time_window))
             file.write('#waveform: ricker 1 {} my_ricker\n'.format(freq))
-            file.write('#hertzian_dipole: z {} {} {} my_ricker\n'.format(*transiever))
+            file.write('#hertzian_dipole: y {} {} {} my_ricker\n'.format(*transiever))
             file.write('#rx: {} {} {}\n'.format(*reciever))
             file.write('#src_steps: {} 0 0\n'.format(mstep))
             file.write('#rx_steps: {} 0 0\n'.format(mstep))
