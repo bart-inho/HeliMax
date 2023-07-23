@@ -19,7 +19,7 @@ class SimulationModel:
         nx_buffered = nx - 50 # buffer of 20 cell on each side
         return round((nx_buffered * self.discrete[0] - antenna_spacing) / number_of_measurements, 2)
 
-    def generate_base_glacier(self):
+    def generate_base_vignes(self):
         nx = int(self.x_size / self.discrete[0])
         ny = int(self.y_size / self.discrete[1])
         nz = int(self.z_size / self.discrete[2])
@@ -28,7 +28,7 @@ class SimulationModel:
         self.model[:, :, round(nz/3):nz] = 1 # Glacier = 1
         # self.model[:, :, 0:10] = 3 # Metal = 3
 
-    def generate_curved_bedrock_glacier(self, center, r, arg_rough):
+    def generate_curved_molasse(self, center, r, arg_rough):
         nx, ny, nz = self.model.shape
 
         r_bedrock = r
@@ -49,8 +49,8 @@ class SimulationModel:
                                         ((i - center[0]) * self.discrete[0])**2)
 
         # Create bedrock, ice, water, and free-air layers based on the radial distances
-        bedrock_mask = (k >= round(nz/3)) & (rij > r_bedrock)
-        ice_mask = (k >= round(nz/3)) & (rij < r_ice)
+        bedrock_mask = (k >= round(nz/10)) & (rij > r_bedrock)
+        ice_mask = (k >= round(nz/10)) & (rij < r_ice)
 
         self.model[bedrock_mask] = 2  # Bedrock = 2
         self.model[ice_mask] = 1  # Ice = 1
