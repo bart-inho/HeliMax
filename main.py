@@ -31,7 +31,7 @@ def main():
 
     # Generate model
     model = SimulationModel(model_name, 
-                            50, 10, 100, 
+                            45, 10, 100, 
                             [0.08, 0.08, 0.08], # Change discretisation if needed here
                             [freespace, glacier, bedrock, metal], # Change name of materials here
                             inout_files)
@@ -46,7 +46,7 @@ def main():
     antenna_spacing    = 4  # Change antenna spacing in [m] here
     measurement_step   = model.calculate_measurment_step(measurement_number, 
                                                          antenna_spacing) # Change antenna spacing in m here
-    
+     
     # Add antenna positions
     transceiver1 = [round(25 * model.discrete[0]), # 25 cells of buffer (20 minimum)    
                     round(model.y_size/2        ),
