@@ -8,6 +8,8 @@ from simulations.simulation_plot_profile import PlotProfile
 import argparse
 
 def main():
+
+    # Parse arguments to run the simulation, add roughness to bedrock and plot the result
     parser = argparse.ArgumentParser()
     parser.add_argument('--run', action='store_true', help='run the simulation')
     parser.add_argument('--plot', action='store_true', help='plot the simulation')
