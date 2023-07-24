@@ -12,7 +12,7 @@ The setup is composed of multiple python files, which the most important one is 
  You must install additionnal requirments (´conda requirment.txt´)
  
 # How it works
-The script is executed using the terminal. `python main.py` generates the model, you can check your geometry and the files generated. `python main.py --run` regenerate all the files and launch the gprMax simulation.
+The script is executed using the terminal. `python main.py` generates the model, you can check your geometry and the files generated. `python main.py --run` regenerate all the files and launch the gprMax simulation. `--rough` will add some roughness to the second layer and `--plot` will make sure to plot the radagram in a pdf file.
 
 ## Generate models
 The models can be generated using simple NumPy arrays. Any kind of geometry can be generated, on few conditions:
