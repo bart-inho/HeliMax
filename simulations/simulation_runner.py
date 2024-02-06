@@ -22,5 +22,5 @@ class SimulationRunner:
         return gpu_queue
 
 
-    def merge_files(self, remove_files):
-        merge_files(self.simulation_model.path + self.simulation_model.name, removefiles = remove_files)
+    def merge_files(remove_files, path_to_files, model_name):
+        merge_files(path_to_files+model_name, removefiles = remove_files)

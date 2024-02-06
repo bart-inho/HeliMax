@@ -2,6 +2,7 @@
 from services.folder_init import InitializeFolders
 from models.model_generation_logic import ModelGenerationLogic
 from simulations.simulation_runner import SimulationRunner
+from simulations.simulation_plot_profile import PlotProfile
 import argparse
 from tqdm import tqdm  # Import tqdm
 from concurrent.futures import ThreadPoolExecutor
@@ -11,6 +12,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--run', action='store_true', help='run the simulation')
     parser.add_argument('--model', action='store_true', help='create the model')
+    parser.add_argument('--merge', action='store_true', help='merge the simulation files')
     parser.add_argument('--plot', action='store_true', help='plot the simulation')
     parser.add_argument('--rough', action='store_true', help='rough bedrock')
     args = parser.parse_args()
@@ -72,5 +74,15 @@ def main():
             t.join()
 
         print("All simulations completed.")
+
+    if args.merge:
+        SimulationRunner.merge_files(True, path_to_files, model_name)
+
+    if args.plot:
+        # simulation_runner.merge_files(True)
+        plot_profile = PlotProfile(path_to_files + '_merged.out', 'Ey')
+        plot_profile.get_output_data()
+        plot_profile.plot()
+        
 if __name__ == "__main__":
     main()
