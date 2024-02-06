@@ -1,91 +1,76 @@
 # This program is used to run the gprMax simulation applied to glaciology.
-from services.file_service import FileService
 from services.folder_init import InitializeFolders
-from models.simulation_model import SimulationModel
-from models.material import Material
+from models.model_generation_logic import ModelGenerationLogic
 from simulations.simulation_runner import SimulationRunner
-from simulations.simulation_plot_profile import PlotProfile  
 import argparse
+from tqdm import tqdm  # Import tqdm
+from concurrent.futures import ThreadPoolExecutor
+import threading
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--run', action='store_true', help='run the simulation')
+    parser.add_argument('--model', action='store_true', help='create the model')
     parser.add_argument('--plot', action='store_true', help='plot the simulation')
     parser.add_argument('--rough', action='store_true', help='rough bedrock')
     args = parser.parse_args()
 
     # Initialize folders
-    InitializeFolders.check_and_create_directories()
-
-    # Initialize Materials
-    # Change the material names in the "Material" class 
-    freespace = Material(1. , 0.   , 1., 0., 'freespace') # Free space
-    glacier   = Material(3.2, 5.e-8, 1., 0., 'glacier'  ) # Glacier
-    bedrock   = Material(5. , 1.e-2, 1., 0., 'bedrock'  ) # Bedrock
-    metal     = Material(1. , 'inf', 1., 0., 'metal'    ) # Helico
+    model_name    = 'model'
+    path_to_files = 'inout_files_noshield/'
+    InitializeFolders.check_and_create_directories(path_to_files)
     
-    # Initialize SimulationModel
-    model_name    = 'test_roughness'
-    inout_files   = 'inout_files/'
-    path_to_files = inout_files + model_name
+    antenna_spacing = 4  # Change antenna spacing in [m] here
 
-    # Generate model
-    model = SimulationModel(model_name, 
-                            45, 10, 100, 
-                            [0.08, 0.08, 0.08], # Change discretisation if needed here
-                            [freespace, glacier, bedrock, metal], # Change name of materials here
-                            inout_files)
-    
-    # Generate base model
-    model.generate_base_glacier()
-    model.generate_curved_bedrock_glacier([-10, 5, -200], # center of the curvature [m]
-                             100,            # radius of the curvature [m]
-                             args.rough)
+    dis = 0.06
+    measurement_number = 1 # number of traces
+    measurement_step = (45-7.5) / measurement_number
+    print(measurement_step)
 
-    measurement_number = 24 # number of traces
-    antenna_spacing    = 4  # Change antenna spacing in [m] here
-    measurement_step   = model.calculate_measurment_step(measurement_number, 
-                                                         antenna_spacing) # Change antenna spacing in m here
-     
-    # Add antenna positions
-    transceiver1 = [round(25 * model.discrete[0]), # 25 cells of buffer (20 minimum)    
-                    round(model.y_size/2        ),
-                    round(model.z_size/5-.5     )]
-    
-    receiver1    = [round(25 * model.discrete[0] + antenna_spacing), # 25 cells of buffer (20 minimum)
-                    round(model.y_size/2                          ),
-                    round(model.z_size/5-.5                       )]
-        
-    #Plot initial model
-    model.plot_initial_model(transceiver1, receiver1)
+    x_m = 45
+    y_m = 10
+    z_m = 100
 
-    # Call FileService to write files
-    FileService.write_materials_file(model.path + model.name + '_materials', 
-                                     model.materials)
-    
-    FileService.write_h5_file(model.path + model.name + '_h5', 
-                              model)
+    antenna_x = round(30 * dis) # 30 cells of buffer (20 minimum
+    antenna_y = round(y_m/2)
+    antenna_z = round(20)
 
-    FileService.write_input_file(model, 
-                                path_to_files, 
-                                path_to_files + '_materials', 
-                                path_to_files + '_h5', 
-                                25e6,   # Change frequency in Hz here
-                                transceiver1, receiver1, 
-                                measurement_step, 
-                                1000e-9) # Change time window in s here
-        
-    # Run simulation
+    rope_length = 15 # length of the rope in [m]
+
+    if args.model:
+        with ThreadPoolExecutor(max_workers=24) as executor:
+            import concurrent.futures
+            futures = [executor.submit(ModelGenerationLogic.model_generation_logic, idx, 
+                                        model_name, 
+                                        x_m, y_m, z_m, 
+                                        dis, antenna_spacing, 
+                                        rope_length, 
+                                        path_to_files, 
+                                        antenna_x, antenna_y, antenna_z,
+                                        measurement_step,
+                                        args) for idx in range(measurement_number)]
+            
+            # Process the futures as they complete (to maintain order, if necessary)
+            for future in tqdm(concurrent.futures.as_completed(futures), total=measurement_number, desc='Creating Models'):
+                result = future.result()  # result returned from create_model
+                
     if args.run:
-        simulation_runner = SimulationRunner(model)
-        simulation_runner.run_simulation(measurement_number)
-        simulation_runner.merge_files(True)
+        # Create a queue to manage GPU availability
+        gpu_queue = SimulationRunner.create_gpu_queue(1)  # Assuming you have 8 GPUs
         
-    # Plot profile
-    if args.plot:
-        plot_profile = PlotProfile(model.path + model.name + '_merged.out', 'Ey')
-        plot_profile.get_output_data()
-        plot_profile.plot()
+        threads = []
+        for idx in range(measurement_number):
+            if idx == 0:
+                idx = ''
+            # Wait for a GPU to become available
+            t = threading.Thread(target=SimulationRunner.run_simulation, args=(path_to_files, model_name, idx, gpu_queue))
+            t.start()
+            threads.append(t)
+        
+        # Wait for all threads to complete
+        for t in threads:
+            t.join()
 
+        print("All simulations completed.")
 if __name__ == "__main__":
     main()
