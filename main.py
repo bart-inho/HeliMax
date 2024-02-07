@@ -76,10 +76,11 @@ def main():
         print("All simulations completed.")
 
     if args.merge:
+        # Merge the files
         SimulationRunner.merge_files(True, path_to_files, model_name)
 
     if args.plot:
-        # simulation_runner.merge_files(True)
+        # Plot the simulation
         plot_profile = PlotProfile(path_to_files + '_merged.out', 'Ey')
         plot_profile.get_output_data()
         plot_profile.plot()
