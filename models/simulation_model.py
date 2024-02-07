@@ -28,7 +28,7 @@ class SimulationModel:
         self.model = np.zeros((nx, ny, nz)) # Free space = 0
         self.model[:, :, round(35/self.discrete[2]):nz] = 1 # Glacier = 1
 
-    def add_rectangle(self, antenna_x, antenna_y, antenna_z, thick, antenna_spacing, dis):
+    def add_shield(self, antenna_x, antenna_y, antenna_z, thick, antenna_spacing, dis):
         
         right_corner = round((antenna_x - 2)/dis)
         left_corner = round((antenna_x + antenna_spacing + 2)/dis)
@@ -36,7 +36,6 @@ class SimulationModel:
         thickness = round(thick/dis)
         front = round((antenna_y - 2)/dis)
         back = round((antenna_y + 2)/dis)
-
         self.model[right_corner:left_corner, front:back, height-thickness:height] = 3
 
     def add_3D_oval_shape(self, center, radii, thickness):
@@ -63,6 +62,7 @@ class SimulationModel:
 
         # Update the model with the new values where the shell should be
         self.model[shell_mask] = 3  # Assign a value for the shell material
+        self.model[inner_surface] = 0  # Assign a value for the inner surface
 
 
     def generate_curved_bedrock_glacier(self, center, r, arg_rough):
@@ -111,7 +111,7 @@ class SimulationModel:
         model = self.model[:, round(self.y_size/self.discrete[1]/2), :].T
 
         X, Y = np.meshgrid(np.linspace(0, self.x_size + self.discrete[0], nx+1), 
-                        np.linspace(0, self.z_size + self.discrete[2], nz +1))
+                        np.linspace(0, self.z_size + self.discrete[2], nz+1))
         
         # Plot parameters
         colors = ['white', 'blue', 'gray', 'black']  # Define colors for each category
@@ -137,3 +137,6 @@ class SimulationModel:
         plt.tight_layout()
         plt.savefig(self.path+'/figures/'+self.name+'.png', format='png')  # Use efficient format
         plt.close()
+
+        # save the model in a csv file
+        np.savetxt(self.path+self.name+'.csv', model, delimiter=',')

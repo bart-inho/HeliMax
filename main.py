@@ -25,13 +25,14 @@ def main():
     antenna_spacing = 4  # Change antenna spacing in [m] here
 
     dis = 0.06
-    measurement_number = 1 # number of traces
-    measurement_step = (45-7.5) / measurement_number
-    print(measurement_step)
+    measurement_number = 3 # number of traces
 
-    x_m = 45
+    x_m = 30
     y_m = 10
     z_m = 100
+
+    measurement_step = (x_m-7.5) / measurement_number
+    print(measurement_step)
 
     antenna_x = round(30 * dis) # 30 cells of buffer (20 minimum
     antenna_y = round(y_m/2)
@@ -48,7 +49,7 @@ def main():
                                         dis, antenna_spacing, 
                                         rope_length, 
                                         path_to_files, 
-                                        antenna_x, antenna_y, antenna_z,
+                                        antenna_x+(idx*measurement_step), antenna_y, antenna_z,
                                         measurement_step,
                                         args) for idx in range(measurement_number)]
             

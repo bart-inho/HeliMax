@@ -1,12 +1,8 @@
 from services.file_service import FileService
-from services.folder_init import InitializeFolders
 from models.simulation_model import SimulationModel
 from models.material import Material
-from simulations.simulation_runner import SimulationRunner
-from simulations.simulation_plot_profile import PlotProfile  
 
 class ModelGenerationLogic:
-
     def model_generation_logic(idx, 
                     model_name, 
                     x_m, y_m, z_m, dis, 
@@ -44,17 +40,17 @@ class ModelGenerationLogic:
                                             100,            # radius of the curvature [m]
                                             args.rough)
         
-        model.add_rectangle(antenna_x, antenna_y, antenna_z, dis, antenna_spacing, dis)
+        model.add_shield(antenna_x, antenna_y, antenna_z, dis, antenna_spacing, dis)
 
+        model.add_3D_oval_shape([antenna_x , antenna_y, antenna_z - rope_length], # center of the curvature [m]
+                                [10, .5, .5],            # radius of the curvature [m]])
+                                dis*20)
+        model.add_3D_oval_shape([antenna_x + 3.5, antenna_y, antenna_z - rope_length - 1.5], # center of the curvature [m]
+                                [20, .1, .1],            # radius of the curvature [m]])
+                                dis*100)
         model.add_3D_oval_shape([antenna_x + antenna_spacing - 1, antenna_y, antenna_z - rope_length], # center of the curvature [m]
                                 [5, 2, 2],            # radius of the curvature [m]])
-                                dis*2)
-        model.add_3D_oval_shape([antenna_x+1.5 , antenna_y, antenna_z - rope_length], # center of the curvature [m]
-                                [10, .5, .5],            # radius of the curvature [m]])
-                                dis*2)
-        model.add_3D_oval_shape([antenna_x + 4, antenna_y, antenna_z - rope_length - 1.5], # center of the curvature [m]
-                                [15, .5, .5],            # radius of the curvature [m]])
-                                dis*2)
+                                dis*3)
         
         transceiver1 = [antenna_x, # 25 cells of buffer (20 minimum)    
                         antenna_y,
@@ -65,7 +61,7 @@ class ModelGenerationLogic:
                         antenna_z]
             
         #Plot initial model
-        # model.plot_initial_model(transceiver1, receiver1)
+        model.plot_initial_model(transceiver1, receiver1)
 
         # Call FileService to write files
         FileService.write_materials_file(model.path + model.name + '_materials', 
