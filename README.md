@@ -1,38 +1,77 @@
 # HeliMax
-This repository aims to show how to generate gprMax input files using NumPy arrays, and how to perform simulation using these input files. The models generated and performed are inspired by an airborne ice Radar setup from ETH Zurich. This work takes place is a master thesis project. The ultimate goal of these simulations is to determine if a shielding between the GPR and the helicopter would be effective and if so, what geometry and properties it should have. The framework can be used to perform any type of layer-based models.
- 
-Public description of the project : https://vaw.ethz.ch/en/research/glaciology/research-projects.html
- 
-# The setup
-The setup is composed of multiple python files, which the most important one is `main.py`. The folder `inout_files` stores  input and output files, as well as the figures. This repository should be downloaded and placed into the gprMax folder. For example :
- 
-`home/user/gprMax/HeliMax`
- 
- You must have a gprMax environment correctly installed : https://github.com/gprMax/gprMax
- You must install additionnal requirments (´conda requirment.txt´)
- 
-# How it works
-The script is executed using the terminal. `python main.py` generates the model, you can check your geometry and the files generated. `python main.py --run` regenerate all the files and launch the gprMax simulation.
 
-## Generate models
-The models can be generated using simple NumPy arrays. Any kind of geometry can be generated, on few conditions:
-1. The array is composed of integer (not physical properties)
-2. Every integer correspond to a specific material
-3. All materials are described in a `.txt` file (see the file for the structure)
-4. The order of the materials matters
-5. The matrix of integer is stored in a `.h5` file
-6. The `.in` file contains all the information, plus the `.txt` and `.h5` file paths
+This repository contains a Python program designed to run gprMax simulations specifically tailored for glaciology research. It utilizes ground-penetrating radar (GPR) simulation to understand and analyze sub-glacial features, including bedrock roughness and ice thickness. The program supports model creation, simulation execution, file merging, and result plotting, with the capability to specify GPU usage for computational efficiency.
 
-## gprMax simulations
-The documentation of gprMax give some simple commands to run simulations. For example:
- 
-`python -m gprMax user_models/cylinder_Ascan_2D.in`, 
- 
-where `cylinder_Ascan.in` is a basic input file from gprMax. In certain cases, it's an advantage to use a GPU to run gprMax simulations. This can be done by using the `-gpu` argument.
+## Features
 
-# Multi-GPU clusters
-For multi-GPU users, the installation requires some attention. In the same conda environment used for gprMax, some packages must be installed. The three main packages to install are `pycuda`, `openmpy` and `mpi4py`. This must be done using:
+- **Model Generation**: Dynamically generates simulation models based on user-defined parameters.
+- **Simulation Execution**: Runs simulations using specified GPUs to leverage computational resources effectively.
+- **File Merging**: Merges simulation output files for consolidated analysis.
+- **Result Plotting**: Plots the simulation results for visual analysis.
 
-`conda install -c conda-forge pycuda mpi4py openmpi`
+## Requirements
 
-Then, in certain cases, it will be necessary to remove tha package `mpich` which is installed by conda when installing the package `mpi4py`. `pip` is not used as it will struggle to build wheels to install the packages. 
+- Python 3.x
+- gprMax
+- tqdm
+- concurrent.futures
+
+Please ensure you have gprMax installed and configured correctly on your system. You can find installation instructions for gprMax at [gprMax's GitHub page](https://github.com/gprMax/gprMax).
+
+## Installation
+
+Clone this repository to your local machine, make sure that it's in you folder `gprMax`:
+
+```bash
+git clone https://github.com/bart-inho/helimax.git
+cd helimax
+```
+
+Ensure you have the necessary Python dependencies installed:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Usage
+
+The program is executed via the command line, offering several options to control its operation:
+
+- `--run`: Execute the simulation.
+- `--model`: Generate the simulation model.
+- `--merge`: Merge simulation output files.
+- `--plot`: Plot the simulation results.
+- `--name`: Specify the path for input and output files. This argument is required.
+- `--gpus`: Specify comma-separated GPU IDs to use for the simulation (e.g., `0,1,2,3`).
+
+### Examples
+
+Generate a model:
+
+```bash
+python main.py --model --name path/to/files
+```
+
+Run simulations using GPUs 0 and 1:
+
+```bash
+python main.py --run --name path/to/files --gpus 0,1
+```
+
+Merge simulation files and plot results:
+
+```bash
+python main.py --merge --plot --name path/to/files
+```
+
+## Customization
+
+You can customize the simulation parameters such as antenna spacing, measurement number, and dimensions directly within the script. For more advanced configurations, edit the model generation logic as needed.
+
+## Contributing
+
+Contributions to improve the program or address issues are welcome. Please feel free to submit a pull request or open an issue.
+
+## Acknowledgments
+
+This project utilizes [gprMax](https://github.com/gprMax/gprMax), an open-source project for simulating GPR. We acknowledge the developers and contributors of gprMax for their valuable work.
