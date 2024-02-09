@@ -14,7 +14,7 @@ This repository contains a Python program designed to run gprMax simulations spe
 - Python 3.x
 - gprMax
 - tqdm
-- concurrent.futures
+- multiprocessing
 
 Please ensure you have gprMax installed and configured correctly on your system. You can find installation instructions for gprMax at [gprMax's GitHub page](https://github.com/gprMax/gprMax).
 
