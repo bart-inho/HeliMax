@@ -1,5 +1,9 @@
 __pycache__
 inout_files/
+inout_files_control/
+inout_files_heli_only/
+inout_files_heli_shield/
+inout_files_shield_only/
 *.txt
 *.h5
 *.log

@@ -42,15 +42,15 @@ class ModelGenerationLogic:
         
         model.add_shield(antenna_x, antenna_y, antenna_z, dis, antenna_spacing, dis)
 
-        model.add_3D_oval_shape([antenna_x , antenna_y, antenna_z - rope_length], # center of the curvature [m]
-                                [10, .5, .5],            # radius of the curvature [m]])
-                                dis*20)
-        model.add_3D_oval_shape([antenna_x + 3.5, antenna_y, antenna_z - rope_length - 1.5], # center of the curvature [m]
-                                [20, .1, .1],            # radius of the curvature [m]])
-                                dis*100)
-        model.add_3D_oval_shape([antenna_x + antenna_spacing - 1, antenna_y, antenna_z - rope_length], # center of the curvature [m]
-                                [5, 2, 2],            # radius of the curvature [m]])
-                                dis*3)
+        # model.add_3D_oval_shape([antenna_x , antenna_y, antenna_z - rope_length], # center of the curvature [m]
+        #                         [10, .5, .5],            # radius of the curvature [m]])
+        #                         dis*20)
+        # model.add_3D_oval_shape([antenna_x + 3.5, antenna_y, antenna_z - rope_length - 1.5], # center of the curvature [m]
+        #                         [20, .1, .1],            # radius of the curvature [m]])
+        #                         dis*100)
+        # model.add_3D_oval_shape([antenna_x + antenna_spacing - 1, antenna_y, antenna_z - rope_length], # center of the curvature [m]
+        #                         [5, 2, 2],            # radius of the curvature [m]])
+        #                         dis*3)
         
         transceiver1 = [antenna_x, # 25 cells of buffer (20 minimum)    
                         antenna_y,

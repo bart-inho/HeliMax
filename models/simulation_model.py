@@ -64,7 +64,6 @@ class SimulationModel:
         self.model[shell_mask] = 3  # Assign a value for the shell material
         self.model[inner_surface] = 0  # Assign a value for the inner surface
 
-
     def generate_curved_bedrock_glacier(self, center, r, arg_rough):
         nx, ny, nz = self.model.shape
 
@@ -137,6 +136,3 @@ class SimulationModel:
         plt.tight_layout()
         plt.savefig(self.path+'/figures/'+self.name+'.png', format='png')  # Use efficient format
         plt.close()
-
-        # save the model in a csv file
-        np.savetxt(self.path+self.name+'.csv', model, delimiter=',')

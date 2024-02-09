@@ -1,24 +1,25 @@
 from gprMax.gprMax import api
 from tools.outputfiles_merge  import merge_files
 from queue import Queue
+import os
+from multiprocessing import current_process
+
 
 class SimulationRunner:
-    def run_simulation(path_to_files, model_name, idx, gpu_queue):
-        gpu_id = gpu_queue.get()  # Get an available GPU ID from the queue
-        model_input_file_name = f"{model_name}{idx}"  # Assuming model names are indexed
+    def run_simulation(args):
+        path_to_files, model_name, idx, gpu_id = args
+        model_input_file_name = model_name if idx == 0 else f"{model_name}{idx}"
         
-        # Run the simulation on the specified GPU
-        api(f"{path_to_files+model_input_file_name}.in", mpi=False, gpu=[gpu_id])
-        
-        print(f"Simulation {model_input_file_name} completed on GPU {gpu_id}")
-        
-        # Put the GPU ID back in the queue indicating it's available again
-        gpu_queue.put(gpu_id)
+        print(f"Process {current_process().name} running on GPU {gpu_id}: {os.path.join(path_to_files, model_input_file_name + '.in')}")
+        api(os.path.join(path_to_files, model_input_file_name + ".in"), mpi=False, gpu=[gpu_id], n = 1)
 
-    def create_gpu_queue(num_gpus=8):
-        gpu_queue = Queue()
-        for i in range(num_gpus):
-            gpu_queue.put(i)  # Initialize the queue with GPU IDs (0 to 7)
+    def create_gpu_queue(gpu_ids):
+        """
+        Create a queue populated with the specified GPU IDs.
+        """
+        gpu_queue = Queue() # Create a queue
+        for gpu_id in gpu_ids: # Iterate over the specified GPU IDs
+            gpu_queue.put(gpu_id)  # Populate the queue with specified GPU IDs
         return gpu_queue
 
 

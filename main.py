@@ -6,7 +6,7 @@ from simulations.simulation_plot_profile import PlotProfile
 import argparse
 from tqdm import tqdm  # Import tqdm
 from concurrent.futures import ThreadPoolExecutor
-import threading
+from multiprocessing import Pool, cpu_count, current_process
 
 def main():
     parser = argparse.ArgumentParser()
@@ -15,19 +15,22 @@ def main():
     parser.add_argument('--merge', action='store_true', help='merge the simulation files')
     parser.add_argument('--plot', action='store_true', help='plot the simulation')
     parser.add_argument('--rough', action='store_true', help='rough bedrock')
+    parser.add_argument('--name', type=str, help='Path to input and output files', required=True)
+    parser.add_argument('--gpus', type=str, help='Comma-separated list of GPU IDs to use', default='0')
+
     args = parser.parse_args()
 
     # Initialize folders
     model_name    = 'model'
-    path_to_files = 'inout_files_noshield/'
+    path_to_files = args.name
     InitializeFolders.check_and_create_directories(path_to_files)
     
     antenna_spacing = 4  # Change antenna spacing in [m] here
 
     dis = 0.06
-    measurement_number = 3 # number of traces
+    measurement_number = 200 # number of traces
 
-    x_m = 30
+    x_m = 60
     y_m = 10
     z_m = 100
 
@@ -58,21 +61,15 @@ def main():
                 result = future.result()  # result returned from create_model
                 
     if args.run:
-        # Create a queue to manage GPU availability
-        gpu_queue = SimulationRunner.create_gpu_queue(1)  # Assuming you have 8 GPUs
-        
-        threads = []
-        for idx in range(measurement_number):
-            if idx == 0:
-                idx = ''
-            # Wait for a GPU to become available
-            t = threading.Thread(target=SimulationRunner.run_simulation, args=(path_to_files, model_name, idx, gpu_queue))
-            t.start()
-            threads.append(t)
-        
-        # Wait for all threads to complete
-        for t in threads:
-            t.join()
+        gpu_ids = [int(gpu) for gpu in args.gpus.split(',')]
+
+        # Prepare arguments for each simulation
+        total_gpus = len(gpu_ids)
+        simulation_args = [(args.name, 'model', idx, gpu_ids[idx % total_gpus]) for idx in range(200)]
+
+        # Use multiprocessing Pool to run simulations in parallel
+        with Pool(processes=total_gpus) as pool:
+            list(tqdm(pool.imap(SimulationRunner.run_simulation, simulation_args), total=len(simulation_args)))
 
         print("All simulations completed.")
 
