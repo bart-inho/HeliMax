@@ -28,11 +28,35 @@ class SimulationModel:
         self.model = np.zeros((nx, ny, nz)) # Free space = 0
         self.model[:, :, round(35/self.discrete[2]):nz] = 1 # Glacier = 1
 
-    def add_shield(self, antenna_x, antenna_y, antenna_z, thick, antenna_spacing, dis):
+    def add_CI_shield(self, antenna_x, antenna_y, antenna_z, thick, antenna_spacing, dis):
         
-        right_corner = round((antenna_x - 2)/dis)
-        left_corner = round((antenna_x + antenna_spacing + 2)/dis)
+        right_corner = round((antenna_x)/dis)
+        left_corner = round((antenna_x + antenna_spacing + .1)/dis)
+        # right_corner = round((antenna_x - 2)/dis)
+        # left_corner = round((antenna_x + antenna_spacing + 2)/dis)
         height = round((antenna_z-2)/dis)
+        thickness = round(thick/dis)
+        front = round((antenna_y - 2)/dis)
+        back = round((antenna_y + 2)/dis)
+        # front = round((antenna_y - 3)/dis)
+        # back = round((antenna_y + 3)/dis)
+        self.model[right_corner:left_corner, front:back, height-thickness:height] = 3
+
+    def add_DMC_Tx(self, antenna_x, antenna_y, antenna_z, thick, antenna_spacing, dis):
+        
+        right_corner = round((antenna_x - 2*dis)/dis)
+        left_corner = round((antenna_x + 4*dis)/dis)
+        height = round((antenna_z-dis)/dis)
+        thickness = round(thick/dis)
+        front = round((antenna_y - 2)/dis)
+        back = round((antenna_y + 2)/dis)
+        self.model[right_corner:left_corner, front:back, height-thickness:height] = 3
+
+    def add_DMC_Rx(self, antenna_x, antenna_y, antenna_z, thick, antenna_spacing, dis):
+        
+        right_corner = round((antenna_x + antenna_spacing - 2*dis)/dis)
+        left_corner = round((antenna_x + antenna_spacing + 4*dis)/dis)
+        height = round((antenna_z-dis)/dis)
         thickness = round(thick/dis)
         front = round((antenna_y - 2)/dis)
         back = round((antenna_y + 2)/dis)

@@ -6,7 +6,7 @@ from simulations.simulation_plot_profile import PlotProfile
 import argparse
 from tqdm import tqdm  # Import tqdm
 from concurrent.futures import ThreadPoolExecutor
-from multiprocessing import Pool, cpu_count, current_process
+from multiprocessing import Pool
 
 def main():
     parser = argparse.ArgumentParser()
@@ -44,7 +44,7 @@ def main():
     rope_length = 15 # length of the rope in [m]
 
     if args.model:
-        with ThreadPoolExecutor(max_workers=24) as executor:
+        with ThreadPoolExecutor(max_workers=18) as executor:
             import concurrent.futures
             futures = [executor.submit(ModelGenerationLogic.model_generation_logic, idx, 
                                         model_name, 
@@ -75,11 +75,11 @@ def main():
 
     if args.merge:
         # Merge the files
-        SimulationRunner.merge_files(True, path_to_files, model_name)
+        SimulationRunner.merge_files(False, path_to_files, model_name)
 
     if args.plot:
         # Plot the simulation
-        plot_profile = PlotProfile(path_to_files + '_merged.out', 'Ey')
+        plot_profile = PlotProfile(path_to_files + model_name + '_merged.out', 'Ey')
         plot_profile.get_output_data()
         plot_profile.plot()
         

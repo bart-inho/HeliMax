@@ -40,7 +40,9 @@ class ModelGenerationLogic:
                                             100,            # radius of the curvature [m]
                                             args.rough)
         
-        model.add_shield(antenna_x, antenna_y, antenna_z, dis, antenna_spacing, dis)
+        model.add_CI_shield(antenna_x, antenna_y, antenna_z, dis, antenna_spacing, dis)
+        # model.add_DMC_Tx(antenna_x, antenna_y, antenna_z, dis, antenna_spacing, dis)
+        # model.add_DMC_Rx(antenna_x, antenna_y, antenna_z, dis, antenna_spacing, dis)
 
         # model.add_3D_oval_shape([antenna_x , antenna_y, antenna_z - rope_length], # center of the curvature [m]
         #                         [10, .5, .5],            # radius of the curvature [m]])
@@ -60,8 +62,9 @@ class ModelGenerationLogic:
                         antenna_y,
                         antenna_z]
             
-        #Plot initial model
-        model.plot_initial_model(transceiver1, receiver1)
+        #Plot initial model each 20 steps
+        # if idx%20 == 0:
+            # model.plot_initial_model(transceiver1, receiver1)
 
         # Call FileService to write files
         FileService.write_materials_file(model.path + model.name + '_materials', 
